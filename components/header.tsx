@@ -13,9 +13,9 @@ export function Header() {
         <Link href="/" className="wordmark">Aditya Kinjawadekar</Link>
         <nav className="nav" aria-label="Main navigation">
           <Link href="/projects">Projects</Link>
-          <Link href="/writing">Writing</Link>
+          <Link href="/writing" className="nav-writing">Writing</Link>
           <Link href="/tools" className="nav-hide-mobile">Tools</Link>
-          <Link href="/about">About</Link>
+          <Link href="/about" className="nav-about">About</Link>
           <ThemeToggle />
         </nav>
       </div>
