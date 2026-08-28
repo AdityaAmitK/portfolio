@@ -9,7 +9,6 @@ export function ProjectTeaser({ project }: { project: Project }) {
       <div>
         <p className="eyebrow">{project.year} · {project.tags[0]}</p>
         <h3><Link href="/projects">{project.title}</Link></h3>
-        <p>{project.summary}</p>
         <div className="tags">{project.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}</div>
       </div>
     </article>

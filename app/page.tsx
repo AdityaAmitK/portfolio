@@ -15,7 +15,7 @@ export default function Home() {
         <div>
           <p className="eyebrow">Software engineer · Pune, India</p>
           <h1>I build useful software for <em>real problems.</em></h1>
-          <p className="hero-copy">I’m Aditya Kinjawadekar, a software engineer at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a>. I work across product engineering, developer tools, and backend systems—and spend the rest of my curiosity on trading and sport.</p>
+          <p className="hero-copy">I’m Aditya Kinjawadekar, a software engineer at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a>. I build products, developer tools, and backend systems.</p>
           <p className="hero-copy"><a className="inline-link" href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub</a> · <a className="inline-link" href="https://www.linkedin.com/in/adityaamit" target="_blank" rel="noreferrer">LinkedIn</a></p>
         </div>
         <div className="hero-side">
@@ -37,7 +37,7 @@ export default function Home() {
 
       <section className="shell section">
         <div className="section-head"><h2>Recent writing</h2><Link className="section-link" href="/writing">All writing →</Link></div>
-        {posts.length ? <div className="writing-list">{posts.map(post => <Link href={`/writing/${post.slug}`} className="post-row" key={post.id}><div><h3>{post.title}</h3><p>{post.description}</p></div><time>{new Date(post.published_at || post.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</time></Link>)}</div> : <div className="empty-note">The writing desk is ready. Sports notes and longer pieces will appear here soon.</div>}
+        {posts.length ? <div className="writing-list">{posts.map(post => <Link href={`/writing/${post.slug}`} className="post-row" key={post.id}><div><h3>{post.title}</h3><p>{post.description}</p></div><time>{new Date(post.published_at || post.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</time></Link>)}</div> : <div className="empty-note">No posts yet.</div>}
       </section>
 
       <section className="shell section">
