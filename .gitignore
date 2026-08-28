@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+.next/
+data/*.db
+data/*.db-*
+.env*
+!.env.example
+npm-debug.log*

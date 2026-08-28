@@ -1,0 +1,42 @@
+import Link from 'next/link'
+import { ProjectTeaser } from '@/components/project-teaser'
+import { getManagedContent, getPublishedPosts } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
+
+export default function Home() {
+  const posts = getPublishedPosts().slice(0, 3)
+  const { projects, tools } = getManagedContent()
+  return (
+    <main id="main">
+      <section className="shell hero">
+        <div>
+          <p className="eyebrow">Software engineer · Pune, India</p>
+          <h1>I build useful software for <em>real problems.</em></h1>
+          <p className="hero-copy">I’m Aditya Kinjawadekar, a software engineer at <strong>FJ</strong>. I work across product engineering, developer tools, and backend systems—and spend the rest of my curiosity on trading and sport.</p>
+          <p className="hero-copy"><a className="inline-link" href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub</a> · <a className="inline-link" href="https://www.linkedin.com/in/adityaamit" target="_blank" rel="noreferrer">LinkedIn</a></p>
+        </div>
+        <aside className="workbench" aria-label="Current workbench">
+          <div className="workbench__row"><span className="workbench__label">Now</span><span className="workbench__value"><span className="status-dot" />Building at FJ</span></div>
+          <div className="workbench__row"><span className="workbench__label">Exploring</span><span className="workbench__value">Systematic trading</span></div>
+          <div className="workbench__row"><span className="workbench__label">Using</span><span className="workbench__value">TypeScript, Python &amp; Wispr Flow</span></div>
+        </aside>
+      </section>
+
+      <section className="shell section">
+        <div className="section-head"><h2>Selected projects</h2><Link className="section-link" href="/projects">All projects →</Link></div>
+        <div className="project-teasers">{projects.filter(project => project.featured).map(project => <ProjectTeaser project={project} key={project.slug} />)}</div>
+      </section>
+
+      <section className="shell section">
+        <div className="section-head"><h2>Recent writing</h2><Link className="section-link" href="/writing">All writing →</Link></div>
+        {posts.length ? <div className="writing-list">{posts.map(post => <Link href={`/writing/${post.slug}`} className="post-row" key={post.id}><div><h3>{post.title}</h3><p>{post.description}</p></div><time>{new Date(post.published_at || post.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</time></Link>)}</div> : <div className="empty-note">The writing desk is ready. Sports notes and longer pieces will appear here soon.</div>}
+      </section>
+
+      <section className="shell section">
+        <div className="section-head"><h2>Tools I keep around</h2><Link className="section-link" href="/tools">The full workbench →</Link></div>
+        <div className="tool-list">{tools.slice(0, 3).map(tool => <div className="tool-row" key={tool.name}><h2>{tool.name}</h2><span className="tool-row__category">{tool.category}</span><p>{tool.note}</p></div>)}</div>
+      </section>
+    </main>
+  )
+}
