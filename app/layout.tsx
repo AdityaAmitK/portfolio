@@ -21,6 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     name: 'Aditya Kinjawadekar',
     url: 'https://adityakinjawadekar.com',
     jobTitle: 'Software Engineer',
+    worksFor: { '@type': 'Organization', name: 'Fischer Jordan', url: 'https://fischerjordan.com' },
     sameAs: ['https://github.com/AdityaAmitK', 'https://www.linkedin.com/in/adityaamit'],
     knowsAbout: ['Software engineering', 'TypeScript', 'Python', 'Developer tools', 'Systematic trading'],
   }

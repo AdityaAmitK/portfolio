@@ -47,6 +47,13 @@ db.exec(`
 const initialContent: ManagedContent = { projects, tools, skills }
 db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)').run('managed-content', JSON.stringify(initialContent))
 
+const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+const parsedContent = JSON.parse(storedContent.value) as ManagedContent
+if (parsedContent.projects.some(project => project.slug === 'cricket-player-cluster')) {
+  parsedContent.projects = parsedContent.projects.filter(project => project.slug !== 'cricket-player-cluster')
+  db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+}
+
 export function getPublishedPosts() {
   return db.prepare('SELECT * FROM posts WHERE published = 1 ORDER BY published_at DESC, created_at DESC').all() as Post[]
 }

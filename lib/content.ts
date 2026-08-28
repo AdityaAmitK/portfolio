@@ -95,16 +95,6 @@ export const projects: Project[] = [
     tags: ['Python', 'Computer vision', 'Encryption'],
     featured: false,
   },
-  {
-    slug: 'cricket-player-cluster',
-    title: 'Cricket Player Cluster',
-    year: 2024,
-    summary: 'An exploratory sports analytics project that groups cricket players by statistical profile to surface comparable roles and playing styles.',
-    href: 'https://github.com/AdityaAmitK/CricketResearch',
-    linkLabel: 'view source',
-    tags: ['Python', 'Data science', 'Cricket'],
-    featured: false,
-  },
 ]
 
 export const tools: Tool[] = [

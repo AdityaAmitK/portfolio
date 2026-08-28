@@ -61,13 +61,18 @@ img { display: block; max-width: 100%; }
 [data-theme='dark'] .theme-icon--sun { display: grid; }
 :focus-visible { outline: 2px solid var(--signal); outline-offset: 4px; }
 
-.hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(250px, .6fr); gap: 76px; align-items: end; padding: 86px 0 96px; }
+.hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr); gap: 76px; align-items: end; padding: 70px 0 96px; }
 .eyebrow { margin: 0 0 15px; font: 400 11px/1.4 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--signal); }
 .hero h1 { max-width: 720px; margin: 0; font: 600 clamp(50px, 6.8vw, 86px)/.96 'Newsreader', Georgia, serif; letter-spacing: -.052em; }
 .hero h1 em { color: var(--signal); font-weight: 500; }
 .hero-copy { max-width: 660px; margin: 30px 0 0; color: var(--muted); font-size: 18px; line-height: 1.75; }
 .inline-link { color: var(--ink); border-bottom: 1px solid var(--line); transition: border-color .2s, color .2s; }
 .inline-link:hover { color: var(--signal); border-color: var(--signal); }
+.employer-link { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.employer-link:hover { color: var(--signal); text-decoration-color: var(--signal); }
+.hero-side { display: grid; gap: 38px; }
+.profile-frame { width: min(100%, 286px); margin: 0 auto; padding: 9px 9px 26px; background: #eeece5; box-shadow: 0 16px 38px rgba(19, 18, 14, .14); transform: rotate(1.2deg); }
+.profile-frame img { width: 100%; height: auto; filter: saturate(.88) contrast(.98); }
 
 .workbench { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
 .workbench__row { padding: 16px 0; display: grid; grid-template-columns: 100px 1fr; gap: 20px; }
@@ -183,6 +188,8 @@ img { display: block; max-width: 100%; }
   .hero { grid-template-columns: 1fr; gap: 38px; padding: 55px 0 65px; }
   .hero h1 { font-size: clamp(48px, 15vw, 68px); }
   .hero-copy { font-size: 16px; }
+  .hero-side { grid-template-columns: 1fr; }
+  .profile-frame { width: 230px; margin-left: 7px; }
   .workbench { max-width: none; }
   .section { padding: 65px 0; }
   .project-teaser { grid-template-columns: 1fr; gap: 22px; }

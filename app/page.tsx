@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ProjectTeaser } from '@/components/project-teaser'
 import { getManagedContent, getPublishedPosts } from '@/lib/db'
 
@@ -13,14 +14,17 @@ export default function Home() {
         <div>
           <p className="eyebrow">Software engineer · Pune, India</p>
           <h1>I build useful software for <em>real problems.</em></h1>
-          <p className="hero-copy">I’m Aditya Kinjawadekar, a software engineer at <strong>FJ</strong>. I work across product engineering, developer tools, and backend systems—and spend the rest of my curiosity on trading and sport.</p>
+          <p className="hero-copy">I’m Aditya Kinjawadekar, a software engineer at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a>. I work across product engineering, developer tools, and backend systems—and spend the rest of my curiosity on trading and sport.</p>
           <p className="hero-copy"><a className="inline-link" href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub</a> · <a className="inline-link" href="https://www.linkedin.com/in/adityaamit" target="_blank" rel="noreferrer">LinkedIn</a></p>
         </div>
-        <aside className="workbench" aria-label="Current workbench">
-          <div className="workbench__row"><span className="workbench__label">Now</span><span className="workbench__value"><span className="status-dot" />Building at FJ</span></div>
-          <div className="workbench__row"><span className="workbench__label">Exploring</span><span className="workbench__value">Systematic trading</span></div>
-          <div className="workbench__row"><span className="workbench__label">Using</span><span className="workbench__value">TypeScript, Python &amp; Wispr Flow</span></div>
-        </aside>
+        <div className="hero-side">
+          <figure className="profile-frame"><Image src="/images/profile/aditya-kinjawadekar.png" alt="Aditya Kinjawadekar" width={1086} height={1448} priority sizes="(max-width: 760px) 230px, 286px" /></figure>
+          <aside className="workbench" aria-label="Current workbench">
+            <div className="workbench__row"><span className="workbench__label">Now</span><span className="workbench__value"><span className="status-dot" />Building at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a></span></div>
+            <div className="workbench__row"><span className="workbench__label">Exploring</span><span className="workbench__value">Systematic trading</span></div>
+            <div className="workbench__row"><span className="workbench__label">Using</span><span className="workbench__value">TypeScript, Python &amp; Wispr Flow</span></div>
+          </aside>
+        </div>
       </section>
 
       <section className="shell section">
