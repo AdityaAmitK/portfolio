@@ -145,6 +145,7 @@ img { display: block; max-width: 100%; }
 .project-teaser p { margin: 0; color: var(--muted); font-size: 14px; }
 .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 20px; }
 .tag { padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px; font: 400 10px/1.4 'DM Mono', monospace; color: var(--muted); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 .page-intro { padding: 72px 0 84px; }
 .page-intro h1 { margin: 0; font: 600 clamp(48px, 7vw, 76px)/1 'Newsreader', Georgia, serif; letter-spacing: -.045em; }
@@ -177,6 +178,12 @@ img { display: block; max-width: 100%; }
 .contribution-unavailable { margin: 0; border: 1px solid var(--line); padding: 24px; color: var(--muted); }
 
 .writing-list { border-top: 1px solid var(--line); }
+.writing-tools { margin-bottom: 36px; }
+.writing-search { display: grid; grid-template-columns: 1fr auto; border: 1px solid var(--line); }
+.writing-search input { min-width: 0; border: 0; background: transparent; color: var(--ink); padding: 12px 14px; }
+.writing-search button { border: 0; border-left: 1px solid var(--line); background: var(--paper-deep); color: var(--ink); padding: 0 16px; cursor: pointer; font: 400 10px/1.4 'DM Mono', monospace; text-transform: uppercase; }
+.writing-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+.writing-filters .tag[aria-current='true'] { background: var(--signal); border-color: var(--signal); color: var(--paper); }
 .post-row { display: grid; grid-template-columns: 1fr auto; gap: 30px; padding: 25px 0; border-bottom: 1px solid var(--line); }
 .post-row h2, .post-row h3 { margin: 0 0 7px; font: 600 22px/1.2 'Newsreader', Georgia, serif; }
 .post-row p { margin: 0; color: var(--muted); font-size: 14px; }
@@ -206,6 +213,7 @@ img { display: block; max-width: 100%; }
 .prose pre code { background: none; padding: 0; }
 .prose img { margin: 34px auto; }
 .article-meta { margin-bottom: 55px; color: var(--muted); font: 400 11px/1.5 'DM Mono', monospace; }
+.article-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
 
 .site-footer { border-top: 1px solid var(--line); padding: 36px 0 48px; }
 .site-footer__inner { display: flex; justify-content: space-between; gap: 30px; color: var(--muted); font-size: 12px; }
@@ -243,6 +251,14 @@ img { display: block; max-width: 100%; }
 .skill-edit input { flex: 1; border: 0; background: transparent; color: var(--ink); padding: 12px; }
 .skill-edit button { width: 44px; border: 0; border-left: 1px solid var(--line); background: transparent; cursor: pointer; font-size: 20px; }
 .sticky-save { position: sticky; bottom: 20px; display: flex; justify-content: flex-end; padding: 20px 0; }
+.tag-picker { margin: 0; padding: 0; border: 0; }
+.tag-picker legend { margin-bottom: 9px; font: 500 11px/1.4 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.tag-picker > div { display: flex; flex-wrap: wrap; gap: 9px 15px; }
+.tag-create { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: end; max-width: 560px; margin-bottom: 35px; }
+.tag-manager { border-top: 1px solid var(--line); }
+.tag-manager__row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.tag-manager__row > form:first-child { display: grid; grid-template-columns: minmax(180px, 1fr) 140px auto; gap: 14px; align-items: end; }
+.tag-manager__row .mono { padding-bottom: 10px; font-size: 10px; }
 
 @media (max-width: 760px) {
   .shell, .reading-shell, .admin-shell { width: min(100% - 28px, 1080px); }
@@ -294,6 +310,8 @@ img { display: block; max-width: 100%; }
   .credits { text-align: left; }
   .editor-grid, .form-row { grid-template-columns: 1fr; }
   .admin-nav a:not(:last-child) { display: none; }
+  .tag-manager__row, .tag-manager__row > form:first-child { grid-template-columns: 1fr; align-items: stretch; }
+  .tag-manager__row .mono { padding-bottom: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

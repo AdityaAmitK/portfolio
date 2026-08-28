@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createSession, destroySession, isAuthenticated, passwordsMatch } from '@/lib/auth'
-import { deletePost, saveManagedContent, savePost } from '@/lib/db'
+import { deletePost, deleteTag as deleteTagRecord, saveManagedContent, savePost, saveTag as saveTagRecord } from '@/lib/db'
 import type { ManagedContent } from '@/lib/content'
 
 export async function login(formData: FormData) {
@@ -33,7 +33,7 @@ export async function upsertPost(formData: FormData) {
     title,
     slug,
     description: String(formData.get('description') || '').trim(),
-    category: String(formData.get('category') || 'Sport').trim(),
+    tagIds: formData.getAll('tags').map(Number).filter(tagId => Number.isInteger(tagId) && tagId > 0),
     body: String(formData.get('body') || ''),
     published: formData.get('published') === 'on' ? 1 : 0,
   })
@@ -41,6 +41,24 @@ export async function upsertPost(formData: FormData) {
   revalidatePath('/writing')
   revalidatePath(`/writing/${slug}`)
   redirect(`/admin/posts/${id}?saved=1`)
+}
+
+export async function upsertTag(formData: FormData) {
+  if (!(await isAuthenticated())) redirect('/admin/login')
+  const idValue = Number(formData.get('id'))
+  saveTagRecord(Number.isInteger(idValue) && idValue > 0 ? idValue : undefined, String(formData.get('name') || ''))
+  revalidatePath('/admin/tags')
+  revalidatePath('/writing')
+  redirect('/admin/tags?saved=1')
+}
+
+export async function removeTag(formData: FormData) {
+  if (!(await isAuthenticated())) redirect('/admin/login')
+  deleteTagRecord(Number(formData.get('id')))
+  revalidatePath('/admin')
+  revalidatePath('/admin/tags')
+  revalidatePath('/writing')
+  redirect('/admin/tags')
 }
 
 export async function removePost(formData: FormData) {
