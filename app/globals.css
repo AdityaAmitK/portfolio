@@ -195,6 +195,8 @@ img { display: block; max-width: 100%; }
 .writing-list { border-top: 1px solid var(--line); }
 .writing-tools { margin-bottom: 36px; }
 .writing-search { display: grid; grid-template-columns: 1fr auto; border: 1px solid var(--line); }
+.writing-search:focus-within { outline: 2px solid var(--signal); outline-offset: 3px; }
+.writing-search input:focus-visible, .writing-search button:focus-visible { outline: 0; }
 .writing-search input { min-width: 0; border: 0; background: transparent; color: var(--ink); padding: 12px 14px; }
 .writing-search button { border: 0; border-left: 1px solid var(--line); background: var(--paper-deep); color: var(--ink); padding: 0 16px; cursor: pointer; font: 400 10px/1.4 var(--font-utility); text-transform: uppercase; }
 .writing-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
