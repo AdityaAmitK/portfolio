@@ -137,8 +137,8 @@ img { display: block; max-width: 100%; }
 .project-teasers { display: grid; gap: 56px; }
 .project-teaser { display: grid; grid-template-columns: 1.3fr .7fr; gap: 40px; align-items: center; }
 .project-teaser:nth-child(even) .project-teaser__media { order: 2; }
-.project-teaser__media { background: var(--paper-deep); overflow: hidden; border: 1px solid var(--line); }
-.project-teaser__media img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+.project-teaser__media { aspect-ratio: 16 / 10; background: var(--paper-deep); overflow: hidden; border: 1px solid var(--line); }
+.project-teaser__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.2,.7,.2,1); }
 .project-teaser:hover img { transform: scale(1.015); }
 .project-teaser h3 { margin: 0 0 12px; font: 600 29px/1.15 'Newsreader', Georgia, serif; }
 .project-teaser p { margin: 0; color: var(--muted); font-size: 14px; }

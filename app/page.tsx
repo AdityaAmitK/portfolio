@@ -22,8 +22,6 @@ export default function Home() {
           <figure className="profile-frame"><Image src="/images/profile/aditya-kinjawadekar.png" alt="Aditya Kinjawadekar" width={1086} height={1448} priority sizes="(max-width: 760px) 230px, 286px" /></figure>
           <aside className="workbench" aria-label="Current workbench">
             <div className="workbench__row"><span className="workbench__label">Now</span><span className="workbench__value"><span className="status-dot" />Building at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a></span></div>
-            <div className="workbench__row"><span className="workbench__label">Exploring</span><span className="workbench__value">Systematic trading</span></div>
-            <div className="workbench__row"><span className="workbench__label">Using</span><span className="workbench__value">TypeScript, Python &amp; Wispr Flow</span></div>
           </aside>
         </div>
       </section>
