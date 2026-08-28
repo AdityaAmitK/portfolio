@@ -123,6 +123,8 @@ img { display: block; max-width: 100%; }
 .tool-list { border-top: 1px solid var(--line); }
 .tool-row { display: grid; grid-template-columns: 180px 120px 1fr; gap: 30px; padding: 26px 0; border-bottom: 1px solid var(--line); }
 .tool-row h2 { margin: 0; font: 600 21px/1.2 'Newsreader', Georgia, serif; }
+.tool-link { text-decoration: underline; text-decoration-color: var(--line); text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.tool-link:hover { color: var(--signal); text-decoration-color: var(--signal); }
 .tool-row__category { font: 400 10px/1.6 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; color: var(--signal); }
 .tool-row p { margin: 0; color: var(--muted); font-size: 14px; }
 .skill-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }

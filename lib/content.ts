@@ -11,7 +11,7 @@ export type Project = {
   featured: boolean
 }
 
-export type Tool = { name: string; category: string; note: string }
+export type Tool = { name: string; category: string; note: string; href?: string }
 export type ManagedContent = { projects: Project[]; tools: Tool[]; skills: string[] }
 
 export const projects: Project[] = [
@@ -19,7 +19,7 @@ export const projects: Project[] = [
     slug: 'algodesk',
     title: 'AlgoDesk',
     year: 2026,
-    summary: 'A private trading control room for research, backtests, portfolio rails, scheduled execution, and live VPS health. It turns an EMA50 rotation strategy into an observable system instead of a collection of scripts.',
+    summary: 'A private trading control room for research, backtests, portfolio guardrails, scheduled execution, and live market monitoring. It brings strategy research and day-to-day operation into one clear interface.',
     image: '/images/projects/algodesk-demo.jpg',
     imageAlt: 'AlgoDesk trading overview with anonymised sample data',
     tags: ['Python', 'Next.js', 'PostgreSQL', 'Trading systems'],
@@ -90,18 +90,17 @@ export const projects: Project[] = [
     summary: 'Research into a client–server verification flow where facial encodings are encrypted before leaving the device, then decrypted and compared server-side.',
     image: '/images/projects/secure-face-recognition-research.png',
     imageAlt: 'Architecture diagram for encrypted face-recognition verification',
-    href: 'https://github.com/AdityaAmitK/faceRecongition',
-    linkLabel: 'view research code',
+    href: 'https://ieeexplore.ieee.org/ielx8/6287639/10820123/11179966.pdf?tp=&arnumber=11179966&isnumber=10820123',
+    linkLabel: 'read the publication',
     tags: ['Python', 'Computer vision', 'Encryption'],
     featured: false,
   },
 ]
 
 export const tools: Tool[] = [
-  { name: 'Wispr Flow', category: 'Voice', note: 'My fastest way to get an unpolished thought out of my head and into editable text.' },
-  { name: 'Codex', category: 'Engineering', note: 'A practical collaborator for tracing unfamiliar code, shipping changes, and keeping momentum.' },
-  { name: 'Cursor', category: 'Editor', note: 'Where I spend most of my implementation time; fast navigation and AI tools without leaving the editor.' },
-  { name: 'CleanShot X', category: 'Capture', note: 'The quickest way I know to explain a visual problem or make a clean product demo.' },
+  { name: 'Wispr Flow', category: 'Voice', note: 'My fastest way to get an unpolished thought out of my head and into editable text.', href: 'https://wisprflow.ai/' },
+  { name: 'Codex', category: 'Engineering', note: 'A practical collaborator for tracing unfamiliar code, shipping changes, and keeping momentum.', href: 'https://openai.com/codex/' },
+  { name: 'CleanShot X', category: 'Capture', note: 'The quickest way I know to explain a visual problem or make a clean product demo.', href: 'https://cleanshot.com/' },
 ]
 
 export const skills = ['TypeScript', 'React & Next.js', 'Node.js', 'Python', 'Strapi', 'PostgreSQL', 'Systems on Linux', 'Product engineering']

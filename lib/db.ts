@@ -47,11 +47,21 @@ db.exec(`
 const initialContent: ManagedContent = { projects, tools, skills }
 db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)').run('managed-content', JSON.stringify(initialContent))
 
-const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
-const parsedContent = JSON.parse(storedContent.value) as ManagedContent
-if (parsedContent.projects.some(project => project.slug === 'cricket-player-cluster')) {
-  parsedContent.projects = parsedContent.projects.filter(project => project.slug !== 'cricket-player-cluster')
+const contentVersion = Number((db.prepare('SELECT value FROM settings WHERE key = ?').get('content-version') as { value: string } | undefined)?.value || 0)
+if (contentVersion < 2) {
+  const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+  const parsedContent = JSON.parse(storedContent.value) as ManagedContent
+  parsedContent.projects = parsedContent.projects
+    .filter(project => project.slug !== 'cricket-player-cluster')
+    .map(project => {
+      if (project.slug === 'algodesk') return { ...project, summary: projects.find(item => item.slug === 'algodesk')!.summary }
+      if (project.slug === 'rupee-ledger') return { ...project, href: undefined, linkLabel: undefined }
+      if (project.slug === 'secure-face-recognition') return { ...project, href: projects.find(item => item.slug === 'secure-face-recognition')!.href, linkLabel: 'read the publication' }
+      return project
+    })
+  parsedContent.tools = tools
   db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '2') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
 
 export function getPublishedPosts() {
