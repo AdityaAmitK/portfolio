@@ -13,7 +13,7 @@ export default function Home() {
     <main id="main">
       <section className="shell hero">
         <div>
-          <p className="eyebrow">Software engineer · Pune, India</p>
+          <p className="eyebrow">Software engineer</p>
           <h1>I build useful software for <em>real problems.</em></h1>
           <p className="hero-copy">I’m Aditya Kinjawadekar, a software engineer at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a>. I build products, developer tools, and backend systems.</p>
           <p className="hero-copy"><a className="inline-link" href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub</a> · <a className="inline-link" href="https://www.linkedin.com/in/adityaamit" target="_blank" rel="noreferrer">LinkedIn</a></p>
