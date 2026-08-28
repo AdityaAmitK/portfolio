@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ProjectTeaser } from '@/components/project-teaser'
+import { GitHubContributions } from '@/components/github-contributions'
 import { getManagedContent, getPublishedPosts } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -30,6 +31,11 @@ export default function Home() {
       <section className="shell section">
         <div className="section-head"><h2>Selected projects</h2><Link className="section-link" href="/projects">All projects →</Link></div>
         <div className="project-teasers">{projects.filter(project => project.featured).map(project => <ProjectTeaser project={project} key={project.slug} />)}</div>
+      </section>
+
+      <section className="shell section contribution-section">
+        <div className="section-head"><div><p className="eyebrow">Public work, one square at a time</p><h2>GitHub activity</h2></div><a className="section-link" href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">View profile ↗</a></div>
+        <GitHubContributions />
       </section>
 
       <section className="shell section">
