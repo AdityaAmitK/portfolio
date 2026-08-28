@@ -2,7 +2,7 @@
 
 A fast, self-hosted portfolio, project archive, recommendations page, and Markdown publishing desk for [adityakinjawadekar.com](https://adityakinjawadekar.com).
 
-The overall editorial direction is inspired by [Conor Dewey](https://www.conordewey.com/), while the chronological project presentation is inspired by [Parth Sharma](https://www.psrth.sh/projects). Both are credited in the site footer.
+The overall editorial direction is inspired by [Conor Dewey](https://www.conordewey.com/), while the chronological project presentation is inspired by [Parth Sharma](https://www.psrth.sh/projects).
 
 ## Local development
 
