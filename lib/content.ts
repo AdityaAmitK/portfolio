@@ -84,6 +84,18 @@ export const projects: Project[] = [
     featured: false,
   },
   {
+    slug: 'dcpr-ai',
+    title: 'DCPR AI',
+    year: 2024,
+    summary: 'An AI-assisted platform for navigating Mumbai’s Development Control and Promotion Regulations, pairing source documents with cited answers and research workflows. I helped build it at Axion AI Labs from June to July 2024.',
+    image: '/images/projects/dcpr-ai.png',
+    imageAlt: 'DCPR AI assistant answering a planning regulation question beside its source document',
+    href: 'https://app.dcprai.com/',
+    linkLabel: 'visit DCPR AI',
+    tags: ['AI assistant', 'Document search', 'Product engineering'],
+    featured: false,
+  },
+  {
     slug: 'secure-face-recognition',
     title: 'Secure Face Recognition Research',
     year: 2024,

@@ -64,6 +64,15 @@ if (contentVersion < 2) {
   db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '2') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
 
+if (contentVersion < 3) {
+  const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+  const parsedContent = JSON.parse(storedContent.value) as ManagedContent
+  const dcprProject = projects.find(project => project.slug === 'dcpr-ai')!
+  if (!parsedContent.projects.some(project => project.slug === dcprProject.slug)) parsedContent.projects.push(dcprProject)
+  db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '3') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
+}
+
 export function getPublishedPosts() {
   return db.prepare('SELECT * FROM posts WHERE published = 1 ORDER BY published_at DESC, created_at DESC').all() as Post[]
 }
