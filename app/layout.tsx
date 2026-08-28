@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: 'Aditya Kinjawadekar', description: 'Software engineer building thoughtful products, developer tools, and trading systems.' },
 }
 
-const themeScript = `(()=>{try{const m=localStorage.getItem('theme')||'system';document.documentElement.dataset.theme=m==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):m;document.documentElement.dataset.themeMode=m;document.documentElement.dataset.palette=localStorage.getItem('palette')||'moss'}catch{}})()`
+const themeScript = `(()=>{try{const m=localStorage.getItem('theme')||'system',t=m==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):m,p=localStorage.getItem('palette')||'moss',r=document.documentElement;r.dataset.theme=t;r.dataset.themeMode=m;r.dataset.palette=p;if(p==='custom'){const c=JSON.parse(localStorage.getItem('custom-palette-'+t)||'{}');['paper','paper-deep','ink','muted','line','signal','signal-soft'].forEach(k=>{if(/^#[0-9a-f]{6}$/i.test(c[k]||''))r.style.setProperty('--'+k,c[k])})}}catch{}})()`
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const personJsonLd = {
