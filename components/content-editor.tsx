@@ -35,7 +35,7 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
         <div className="section-head"><h2>Projects</h2></div>
         <div className="content-stack">
           {content.projects.map((project, index) => (
-            <details className="admin-card" key={`${project.slug}-${index}`}>
+            <details className="admin-card" key={index}>
               <summary><strong>{project.title || 'Untitled project'}</strong><span className="mono muted">{project.year}</span></summary>
               <div className="admin-form content-fields">
                 <div className="form-row">
@@ -65,7 +65,7 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
         <div className="section-head"><h2>Recommended tools</h2></div>
         <div className="content-stack">
           {content.tools.map((tool, index) => (
-            <div className="admin-card admin-form" key={`${tool.name}-${index}`}>
+            <div className="admin-card admin-form" key={index}>
               <div className="form-row">
                 <div className="field"><label>Name</label><input value={tool.name} onChange={event => updateTool(index, { name: event.target.value })} /></div>
                 <div className="field"><label>Category</label><input value={tool.category} onChange={event => updateTool(index, { category: event.target.value })} /></div>
@@ -83,7 +83,7 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
         <div className="section-head"><h2>Skills</h2></div>
         <div className="content-stack">
           {content.skills.map((skill, index) => (
-            <div className="skill-edit" key={`${skill}-${index}`}>
+            <div className="skill-edit" key={index}>
               <input value={skill} onChange={event => setContent(value => ({ ...value, skills: value.skills.map((item, i) => i === index ? event.target.value : item) }))} />
               <button type="button" aria-label={`Remove ${skill}`} onClick={() => setContent(value => ({ ...value, skills: value.skills.filter((_, i) => i !== index) }))}>×</button>
             </div>
