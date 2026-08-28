@@ -2,7 +2,7 @@ import 'server-only'
 import Database from 'better-sqlite3'
 import fs from 'node:fs'
 import path from 'node:path'
-import { projects, skills, tools, type ManagedContent } from './content'
+import { about, projects, skills, tools, type ManagedContent } from './content'
 
 export type Tag = { id: number; name: string; slug: string }
 export type Post = {
@@ -78,7 +78,7 @@ if (tagSchemaVersion < 1) {
   migrateTags()
 }
 
-const initialContent: ManagedContent = { projects, tools, skills }
+const initialContent: ManagedContent = { projects, tools, skills, about }
 db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)').run('managed-content', JSON.stringify(initialContent))
 
 const contentVersion = Number((db.prepare('SELECT value FROM settings WHERE key = ?').get('content-version') as { value: string } | undefined)?.value || 0)
@@ -105,6 +105,14 @@ if (contentVersion < 3) {
   if (!parsedContent.projects.some(project => project.slug === dcprProject.slug)) parsedContent.projects.push(dcprProject)
   db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
   db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '3') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
+}
+
+if (contentVersion < 4) {
+  const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+  const parsedContent = JSON.parse(storedContent.value) as Partial<ManagedContent>
+  parsedContent.about = about
+  db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '4') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
 
 function tagsForPost(postId: number) {

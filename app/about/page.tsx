@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
+import { Markdown } from '@/components/markdown'
+import { getManagedContent } from '@/lib/db'
 
 export const metadata: Metadata = { title: 'About', description: 'About Aditya Kinjawadekar, a software engineer building products, developer tools, and backend systems.', alternates: { canonical: '/about' } }
+export const dynamic = 'force-dynamic'
 
 export default function AboutPage() {
-  return <main id="main" className="reading-shell prose"><p className="eyebrow">About</p><h1>I like software that earns its place.</h1><p>I’m Aditya, a software engineer. I currently work at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a>, where I build and maintain products across the stack. From June to July 2024, I worked with <a href="https://www.axionailabs.in/" target="_blank" rel="noreferrer">Axion AI Labs</a> to help build <a href="https://app.dcprai.com/" target="_blank" rel="noreferrer">DCPR AI</a>.</p><p>Outside work, I build tools for myself: a trading control room, a personal finance desk, a keyboard bridge between iPhone and Mac, and small developer utilities that remove recurring friction. When those utilities become useful beyond my own machine, I publish them.</p><h2>Other interests</h2><p>Trading is an active, evolving interest rather than a claim of expertise. I’m interested in the engineering behind systematic strategies: clean data, explicit risk, reproducible research, observable execution, and knowing when a system should do nothing.</p><p>Sport—especially cricket—is where much of my writing will begin. I’m drawn to the decisions behind the score: selection, roles, matchups, and what the usual summary leaves out.</p><h2>Elsewhere</h2><p><a href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub</a> · <a href="https://www.linkedin.com/in/adityaamit" target="_blank" rel="noreferrer">LinkedIn</a></p></main>
+  const { about } = getManagedContent()
+  return <main id="main" className="reading-shell prose"><p className="eyebrow">About</p><h1>{about.headline}</h1><Markdown>{about.body}</Markdown></main>
 }

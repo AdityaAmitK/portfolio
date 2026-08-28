@@ -24,6 +24,14 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
       <input type="hidden" name="content" value={JSON.stringify(content)} />
 
       <section>
+        <div className="section-head"><h2>About</h2></div>
+        <div className="admin-card admin-form">
+          <div className="field"><label>Headline</label><input value={content.about.headline} onChange={event => setContent(value => ({ ...value, about: { ...value.about, headline: event.target.value } }))} /></div>
+          <div className="field"><label>Body (Markdown)</label><textarea className="about-textarea" value={content.about.body} onChange={event => setContent(value => ({ ...value, about: { ...value.about, body: event.target.value } }))} /></div>
+        </div>
+      </section>
+
+      <section>
         <div className="section-head"><h2>Projects</h2></div>
         <div className="content-stack">
           {content.projects.map((project, index) => (

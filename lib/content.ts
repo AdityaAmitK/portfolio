@@ -12,7 +12,8 @@ export type Project = {
 }
 
 export type Tool = { name: string; category: string; note: string; href?: string }
-export type ManagedContent = { projects: Project[]; tools: Tool[]; skills: string[] }
+export type AboutContent = { headline: string; body: string }
+export type ManagedContent = { projects: Project[]; tools: Tool[]; skills: string[]; about: AboutContent }
 
 export const projects: Project[] = [
   {
@@ -116,3 +117,20 @@ export const tools: Tool[] = [
 ]
 
 export const skills = ['TypeScript', 'React & Next.js', 'Node.js', 'Python', 'Strapi', 'PostgreSQL', 'Systems on Linux', 'Product engineering']
+
+export const about: AboutContent = {
+  headline: 'I like software that earns its place.',
+  body: `I’m Aditya, a software engineer. I currently work at [Fischer Jordan](https://fischerjordan.com), where I build and maintain products across the stack. From June to July 2024, I worked with [Axion AI Labs](https://www.axionailabs.in/) to help build [DCPR AI](https://app.dcprai.com/).
+
+Outside work, I build tools for myself: a trading control room, a personal finance desk, a keyboard bridge between iPhone and Mac, and small developer utilities that remove recurring friction. When those utilities become useful beyond my own machine, I publish them.
+
+## Other interests
+
+Trading is an active, evolving interest rather than a claim of expertise. I’m interested in the engineering behind systematic strategies: clean data, explicit risk, reproducible research, observable execution, and knowing when a system should do nothing.
+
+Football is where much of my sports writing will begin. I’m drawn to the decisions behind the score: selection, roles, matchups, and what the usual summary leaves out.
+
+## Elsewhere
+
+[GitHub](https://github.com/AdityaAmitK) · [LinkedIn](https://www.linkedin.com/in/adityaamit)`,
+}

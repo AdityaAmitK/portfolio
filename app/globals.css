@@ -246,6 +246,7 @@ img { display: block; max-width: 100%; }
 .content-stack details summary { display: flex; justify-content: space-between; cursor: pointer; }
 .content-fields { margin-top: 24px; }
 .field textarea.short-textarea { min-height: 110px; font-family: 'Manrope', sans-serif; }
+.field textarea.about-textarea { min-height: 360px; font-family: 'Manrope', sans-serif; }
 .add-button { margin-top: 14px; }
 .skill-edit { display: flex; border: 1px solid var(--line); background: var(--paper-deep); }
 .skill-edit input { flex: 1; border: 0; background: transparent; color: var(--ink); padding: 12px; }
