@@ -5,7 +5,14 @@ import { useEffect, useState } from 'react'
 
 const modes = ['light', 'dark', 'system'] as const
 const palettes = ['moss', 'ocean', 'clay', 'plum', 'custom'] as const
-const fonts = ['editorial', 'sans'] as const
+const fonts = {
+  title: [['newsreader', 'Newsreader'], ['fraunces', 'Fraunces'], ['manrope', 'Manrope']],
+  body: [['manrope', 'Manrope'], ['inter', 'Inter'], ['source-serif', 'Source Serif 4']],
+  code: [['dm-mono', 'DM Mono'], ['jetbrains-mono', 'JetBrains Mono'], ['system-mono', 'System Mono']],
+} as const
+type FontRole = keyof typeof fonts
+type FontChoices = Record<FontRole, string>
+const defaultFonts: FontChoices = { title: 'newsreader', body: 'manrope', code: 'dm-mono' }
 const tokens = [
   ['paper', 'Background'], ['paper-deep', 'Surface'], ['ink', 'Text'], ['muted', 'Muted text'],
   ['line', 'Borders'], ['signal', 'Accent'], ['signal-soft', 'Accent soft'],
@@ -28,6 +35,7 @@ function applyColors(colors: Colors) {
 
 export function ThemeToggle() {
   const [colors, setColors] = useState<Colors>(defaults.light)
+  const [fontChoices, setFontChoices] = useState<FontChoices>(defaultFonts)
 
   useEffect(() => {
     const media = matchMedia('(prefers-color-scheme: dark)')
@@ -42,7 +50,14 @@ export function ThemeToggle() {
       }
     }
     const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
-    queueMicrotask(() => setColors(savedColors(theme)))
+    queueMicrotask(() => {
+      setColors(savedColors(theme))
+      setFontChoices({
+        title: document.documentElement.dataset.titleFont || defaultFonts.title,
+        body: document.documentElement.dataset.bodyFont || defaultFonts.body,
+        code: document.documentElement.dataset.codeFont || defaultFonts.code,
+      })
+    })
     media.addEventListener('change', syncSystemTheme)
     return () => media.removeEventListener('change', syncSystemTheme)
   }, [])
@@ -78,9 +93,10 @@ export function ThemeToggle() {
     localStorage.setItem(`custom-palette-${theme}`, JSON.stringify(next))
   }
 
-  function setFont(font: typeof fonts[number]) {
-    document.documentElement.setAttribute('data-font', font)
-    localStorage.setItem('font', font)
+  function setFont(role: FontRole, font: string) {
+    setFontChoices(current => ({ ...current, [role]: font }))
+    document.documentElement.setAttribute(`data-${role}-font`, font)
+    localStorage.setItem(`font-${role}`, font)
   }
 
   return (
@@ -93,7 +109,7 @@ export function ThemeToggle() {
         <div className="palette-options">{palettes.map(palette => <button type="button" className={`palette-option palette-option--${palette}`} data-palette={palette} onClick={() => setPalette(palette)} aria-label={`${palette} palette`} title={palette} key={palette} />)}</div>
         <div className="custom-colors">{tokens.map(([token, label]) => <label key={token}><span>{label}</span><input type="color" value={colors[token]} onChange={event => setColor(token, event.target.value)} /></label>)}</div>
         <span className="theme-menu__label theme-menu__label--fonts">Typography</span>
-        <div className="font-options">{fonts.map(font => <button type="button" data-font-option={font} onClick={() => setFont(font)} key={font}>{font}</button>)}</div>
+        <div className="font-options">{Object.entries(fonts).map(([role, options]) => <label key={role}><span>{role === 'body' ? 'Content' : role}</span><select value={fontChoices[role as FontRole]} onChange={event => setFont(role as FontRole, event.target.value)}>{options.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>)}</div>
       </div>
     </details>
   )
