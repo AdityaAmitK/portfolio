@@ -22,12 +22,30 @@
   color-scheme: dark;
 }
 
-[data-palette='ocean'] { --signal: #286a78; --signal-soft: #d7e8eb; }
-[data-theme='dark'][data-palette='ocean'] { --signal: #83c5d2; --signal-soft: #20383d; }
-[data-palette='clay'] { --signal: #9a4f37; --signal-soft: #eee0d9; }
-[data-theme='dark'][data-palette='clay'] { --signal: #df9c83; --signal-soft: #422d26; }
-[data-palette='plum'] { --signal: #785179; --signal-soft: #e9dfea; }
-[data-theme='dark'][data-palette='plum'] { --signal: #cba3cc; --signal-soft: #3b2b3c; }
+[data-palette='ocean'] {
+  --paper: #edf4f4; --paper-deep: #dce9e9; --ink: #14292d; --muted: #5a7175;
+  --line: #bfd3d4; --signal: #286a78; --signal-soft: #d0e5e8;
+}
+[data-theme='dark'][data-palette='ocean'] {
+  --paper: #101b1e; --paper-deep: #17272b; --ink: #e7f1f1; --muted: #98afb3;
+  --line: #294248; --signal: #83c5d2; --signal-soft: #20383d;
+}
+[data-palette='clay'] {
+  --paper: #f5eee7; --paper-deep: #eaded3; --ink: #2c1e18; --muted: #786158;
+  --line: #d8c2b2; --signal: #9a4f37; --signal-soft: #ecd9cf;
+}
+[data-theme='dark'][data-palette='clay'] {
+  --paper: #211713; --paper-deep: #2d201a; --ink: #f1e8e1; --muted: #b9a197;
+  --line: #4b352c; --signal: #df9c83; --signal-soft: #422d26;
+}
+[data-palette='plum'] {
+  --paper: #f3eff5; --paper-deep: #e6deea; --ink: #281f2c; --muted: #736579;
+  --line: #d1c3d7; --signal: #785179; --signal-soft: #e4d8e7;
+}
+[data-theme='dark'][data-palette='plum'] {
+  --paper: #1d171f; --paper-deep: #29202c; --ink: #f0e9f2; --muted: #b1a0b7;
+  --line: #433548; --signal: #cba3cc; --signal-soft: #3b2b3c;
+}
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -76,11 +94,11 @@ img { display: block; max-width: 100%; }
 .theme-modes button:last-child { border-right: 0; }
 [data-theme-mode='light'] .theme-modes [data-mode='light'], [data-theme-mode='dark'] .theme-modes [data-mode='dark'], [data-theme-mode='system'] .theme-modes [data-mode='system'] { background: var(--signal-soft); color: var(--ink); }
 .palette-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
-.palette-option { aspect-ratio: 1; border: 1px solid var(--line); background: var(--swatch); cursor: pointer; }
-.palette-option--moss { --swatch: #315f55; }
-.palette-option--ocean { --swatch: #286a78; }
-.palette-option--clay { --swatch: #9a4f37; }
-.palette-option--plum { --swatch: #785179; }
+.palette-option { aspect-ratio: 1; border: 1px solid var(--line); background: linear-gradient(135deg, var(--swatch-paper) 0 48%, var(--swatch-ink) 48% 70%, var(--swatch-signal) 70%); cursor: pointer; }
+.palette-option--moss { --swatch-paper: #f4f1e9; --swatch-ink: #20201d; --swatch-signal: #315f55; }
+.palette-option--ocean { --swatch-paper: #edf4f4; --swatch-ink: #14292d; --swatch-signal: #286a78; }
+.palette-option--clay { --swatch-paper: #f5eee7; --swatch-ink: #2c1e18; --swatch-signal: #9a4f37; }
+.palette-option--plum { --swatch-paper: #f3eff5; --swatch-ink: #281f2c; --swatch-signal: #785179; }
 [data-palette='moss'] .palette-option--moss, [data-palette='ocean'] .palette-option--ocean, [data-palette='clay'] .palette-option--clay, [data-palette='plum'] .palette-option--plum { outline: 2px solid var(--ink); outline-offset: 2px; }
 :focus-visible { outline: 2px solid var(--signal); outline-offset: 4px; }
 
