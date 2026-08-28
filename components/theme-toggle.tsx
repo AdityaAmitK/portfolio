@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 const modes = ['light', 'dark', 'system'] as const
 const palettes = ['moss', 'ocean', 'clay', 'plum', 'custom'] as const
+const fonts = ['editorial', 'sans'] as const
 const tokens = [
   ['paper', 'Background'], ['paper-deep', 'Surface'], ['ink', 'Text'], ['muted', 'Muted text'],
   ['line', 'Borders'], ['signal', 'Accent'], ['signal-soft', 'Accent soft'],
@@ -77,6 +78,11 @@ export function ThemeToggle() {
     localStorage.setItem(`custom-palette-${theme}`, JSON.stringify(next))
   }
 
+  function setFont(font: typeof fonts[number]) {
+    document.documentElement.setAttribute('data-font', font)
+    localStorage.setItem('font', font)
+  }
+
   return (
     <details className="theme-picker">
       <summary className="theme-button" aria-label="Customize theme"><Palette size={17} /></summary>
@@ -86,6 +92,8 @@ export function ThemeToggle() {
         <span className="theme-menu__label">Palette</span>
         <div className="palette-options">{palettes.map(palette => <button type="button" className={`palette-option palette-option--${palette}`} data-palette={palette} onClick={() => setPalette(palette)} aria-label={`${palette} palette`} title={palette} key={palette} />)}</div>
         <div className="custom-colors">{tokens.map(([token, label]) => <label key={token}><span>{label}</span><input type="color" value={colors[token]} onChange={event => setColor(token, event.target.value)} /></label>)}</div>
+        <span className="theme-menu__label theme-menu__label--fonts">Typography</span>
+        <div className="font-options">{fonts.map(font => <button type="button" data-font-option={font} onClick={() => setFont(font)} key={font}>{font}</button>)}</div>
       </div>
     </details>
   )
