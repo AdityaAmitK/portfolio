@@ -33,10 +33,7 @@ export default function Home() {
         <div className="project-teasers">{projects.filter(project => project.featured).map(project => <ProjectTeaser project={project} key={project.slug} />)}</div>
       </section>
 
-      <section className="shell section contribution-section">
-        <div className="section-head"><div><p className="eyebrow">Public work, one square at a time</p><h2>GitHub activity</h2></div><a className="section-link" href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">View profile ↗</a></div>
-        <GitHubContributions />
-      </section>
+      <section className="shell section contribution-section" aria-label="GitHub contributions"><GitHubContributions /></section>
 
       <section className="shell section">
         <div className="section-head"><h2>Recent writing</h2><Link className="section-link" href="/writing">All writing →</Link></div>
