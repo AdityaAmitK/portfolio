@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: 'Aditya Kinjawadekar', description: 'Software engineer building thoughtful products, developer tools, and trading systems.' },
 }
 
-const themeScript = `(()=>{try{const t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch{}})()`
+const themeScript = `(()=>{try{const m=localStorage.getItem('theme')||'system';document.documentElement.dataset.theme=m==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):m;document.documentElement.dataset.themeMode=m;document.documentElement.dataset.palette=localStorage.getItem('palette')||'moss'}catch{}})()`
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const personJsonLd = {
