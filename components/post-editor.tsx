@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type ClipboardEvent } from 'react'
 import type { Post, Tag } from '@/lib/db'
 import { upsertPost } from '@/app/admin/actions'
 import { Markdown } from './markdown'
@@ -26,12 +26,8 @@ export function PostEditor({ post, tags }: { post?: Post; tags: Tag[] }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const selectedTags = new Set(post?.tags.map(tag => tag.id) || [])
 
-  async function addBodyImage(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    if (!file) return
+  async function insertBodyImage(file: File, start: number, end: number) {
     const textarea = textareaRef.current
-    const start = textarea?.selectionStart ?? body.length
-    const end = textarea?.selectionEnd ?? start
     try {
       setUploadStatus('Uploading article image…')
       const url = await uploadImage(file)
@@ -47,9 +43,22 @@ export function PostEditor({ post, tags }: { post?: Post; tags: Tag[] }) {
       })
     } catch (error) {
       setUploadStatus(error instanceof Error ? error.message : 'Upload failed.')
-    } finally {
-      event.target.value = ''
     }
+  }
+
+  async function addBodyImage(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const textarea = textareaRef.current
+    await insertBodyImage(file, textarea?.selectionStart ?? body.length, textarea?.selectionEnd ?? body.length)
+    event.target.value = ''
+  }
+
+  function pasteBodyImage(event: ClipboardEvent<HTMLTextAreaElement>) {
+    const file = Array.from(event.clipboardData.files).find(item => item.type.startsWith('image/'))
+    if (!file) return
+    event.preventDefault()
+    void insertBodyImage(file, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)
   }
 
   async function addCoverImage(event: ChangeEvent<HTMLInputElement>) {
@@ -77,7 +86,7 @@ export function PostEditor({ post, tags }: { post?: Post; tags: Tag[] }) {
       {coverImage && <div className="cover-editor__preview"><Image src={coverImage} alt="Cover preview" width={1200} height={630} unoptimized /><button type="button" className="admin-button admin-button--secondary" onClick={() => setCoverImage('')}>Remove cover</button></div>}
     </section>
     <div className="form-row"><fieldset className="field tag-picker"><legend>Tags</legend>{tags.length ? <div>{tags.map(tag => <label className="checkbox" key={tag.id}><input name="tags" value={tag.id} type="checkbox" defaultChecked={selectedTags.has(tag.id)} /> {tag.name}</label>)}</div> : <p className="muted">Create tags from the Tags page first.</p>}</fieldset><label className="checkbox"><input name="published" type="checkbox" defaultChecked={Boolean(post?.published)} /> Published</label></div>
-    <div className="editor-grid"><div className="field"><div className="editor-label-row"><label htmlFor="body">Markdown</label><label className="admin-button admin-button--secondary image-upload-button">Add image<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={addBodyImage} /></label></div><textarea ref={textareaRef} id="body" name="body" value={body} onChange={event => setBody(event.target.value)} spellCheck /></div><div><span className="eyebrow">Live preview</span><article className="editor-preview prose"><Markdown>{body}</Markdown></article></div></div>
+    <div className="editor-grid"><div className="field"><div className="editor-label-row"><div><label htmlFor="body">Markdown</label><small>Paste screenshots directly with Cmd/Ctrl+V.</small></div><label className="admin-button admin-button--secondary image-upload-button">Add image<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={addBodyImage} /></label></div><textarea ref={textareaRef} id="body" name="body" value={body} onChange={event => setBody(event.target.value)} onPaste={pasteBodyImage} spellCheck /></div><div><span className="eyebrow">Live preview</span><article className="editor-preview prose"><Markdown>{body}</Markdown></article></div></div>
     {uploadStatus && <p className="upload-status" role="status">{uploadStatus}</p>}
     <div><button className="admin-button" type="submit">Save post</button></div>
   </form>
