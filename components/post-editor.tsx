@@ -61,18 +61,28 @@ export function PostEditor({ post, tags }: { post?: Post; tags: Tag[] }) {
     void insertBodyImage(file, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)
   }
 
-  async function addCoverImage(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    if (!file) return
+  async function uploadCoverImage(file: File) {
     try {
       setUploadStatus('Uploading cover image…')
       setCoverImage(await uploadImage(file))
       setUploadStatus('Cover image uploaded.')
     } catch (error) {
       setUploadStatus(error instanceof Error ? error.message : 'Upload failed.')
-    } finally {
-      event.target.value = ''
     }
+  }
+
+  async function addCoverImage(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    await uploadCoverImage(file)
+    event.target.value = ''
+  }
+
+  function pasteCoverImage(event: ClipboardEvent<HTMLElement>) {
+    const file = Array.from(event.clipboardData.files).find(item => item.type.startsWith('image/'))
+    if (!file) return
+    event.preventDefault()
+    void uploadCoverImage(file)
   }
 
   return <form action={upsertPost} className="admin-form">
@@ -80,8 +90,8 @@ export function PostEditor({ post, tags }: { post?: Post; tags: Tag[] }) {
     <input type="hidden" name="coverImage" value={coverImage} />
     <div className="form-row"><div className="field"><label htmlFor="title">Title</label><input id="title" name="title" defaultValue={post?.title} required /></div><div className="field"><label htmlFor="slug">URL slug</label><input id="slug" name="slug" defaultValue={post?.slug} placeholder="generated-from-title" /></div></div>
     <div className="field"><label htmlFor="description">Description</label><input id="description" name="description" defaultValue={post?.description} maxLength={180} placeholder="One useful sentence for readers and search results." /></div>
-    <section className="cover-editor" aria-labelledby="cover-label">
-      <div className="field"><label id="cover-label" htmlFor="cover-upload">Cover image</label><input id="cover-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={addCoverImage} /><small>Used at the top of the article and when its link is shared.</small></div>
+    <section className="cover-editor" aria-labelledby="cover-label" onPaste={pasteCoverImage} tabIndex={0}>
+      <div className="field"><label id="cover-label" htmlFor="cover-upload">Cover image</label><input id="cover-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={addCoverImage} /><small>Upload or paste an image here. It appears in the article and when its link is shared.</small></div>
       <div className="field"><label htmlFor="cover-alt">Cover alt text</label><input id="cover-alt" name="coverAlt" defaultValue={post?.cover_alt} placeholder="Describe the image for readers using screen readers" /></div>
       {coverImage && <div className="cover-editor__preview"><Image src={coverImage} alt="Cover preview" width={1200} height={630} unoptimized /><button type="button" className="admin-button admin-button--secondary" onClick={() => setCoverImage('')}>Remove cover</button></div>}
     </section>
