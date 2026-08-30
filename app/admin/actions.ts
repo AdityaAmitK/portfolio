@@ -35,6 +35,8 @@ export async function upsertPost(formData: FormData) {
     description: String(formData.get('description') || '').trim(),
     tagIds: formData.getAll('tags').map(Number).filter(tagId => Number.isInteger(tagId) && tagId > 0),
     body: String(formData.get('body') || ''),
+    cover_image: String(formData.get('coverImage') || '').trim(),
+    cover_alt: String(formData.get('coverAlt') || '').trim(),
     published: formData.get('published') === 'on' ? 1 : 0,
   })
   revalidatePath('/')

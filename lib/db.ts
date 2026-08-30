@@ -11,6 +11,8 @@ export type Post = {
   title: string
   description: string
   body: string
+  cover_image: string
+  cover_alt: string
   tags: Tag[]
   published: number
   published_at: string | null
@@ -19,7 +21,7 @@ export type Post = {
 }
 
 type PostRow = Omit<Post, 'tags'> & { category: string }
-type PostInput = Pick<Post, 'slug' | 'title' | 'description' | 'body' | 'published'> & { id?: number; tagIds: number[] }
+type PostInput = Pick<Post, 'slug' | 'title' | 'description' | 'body' | 'cover_image' | 'cover_alt' | 'published'> & { id?: number; tagIds: number[] }
 
 const databasePath = process.env.DATABASE_PATH
   ? path.resolve(/* turbopackIgnore: true */ process.env.DATABASE_PATH)
@@ -58,6 +60,10 @@ db.exec(`
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 `)
+
+const postColumns = new Set((db.prepare('PRAGMA table_info(posts)').all() as { name: string }[]).map(column => column.name))
+if (!postColumns.has('cover_image')) db.exec("ALTER TABLE posts ADD COLUMN cover_image TEXT NOT NULL DEFAULT ''")
+if (!postColumns.has('cover_alt')) db.exec("ALTER TABLE posts ADD COLUMN cover_alt TEXT NOT NULL DEFAULT ''")
 
 function slugify(value: string) {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -160,9 +166,9 @@ export const savePost = db.transaction((input: PostInput) => {
   const publishedAt = input.published ? new Date().toISOString() : null
   let id = input.id
   if (id) {
-    db.prepare(`UPDATE posts SET slug=@slug,title=@title,description=@description,body=@body,published=@published,published_at=COALESCE(published_at,@publishedAt),updated_at=CURRENT_TIMESTAMP WHERE id=@id`).run({ ...input, publishedAt })
+    db.prepare(`UPDATE posts SET slug=@slug,title=@title,description=@description,body=@body,cover_image=@cover_image,cover_alt=@cover_alt,published=@published,published_at=COALESCE(published_at,@publishedAt),updated_at=CURRENT_TIMESTAMP WHERE id=@id`).run({ ...input, publishedAt })
   } else {
-    id = Number(db.prepare(`INSERT INTO posts (slug,title,description,body,category,published,published_at) VALUES (@slug,@title,@description,@body,'',@published,@publishedAt)`).run({ ...input, publishedAt }).lastInsertRowid)
+    id = Number(db.prepare(`INSERT INTO posts (slug,title,description,body,cover_image,cover_alt,category,published,published_at) VALUES (@slug,@title,@description,@body,@cover_image,@cover_alt,'',@published,@publishedAt)`).run({ ...input, publishedAt }).lastInsertRowid)
   }
   db.prepare('DELETE FROM post_tags WHERE post_id = ?').run(id)
   const attachTag = db.prepare('INSERT OR IGNORE INTO post_tags (post_id, tag_id) SELECT ?, id FROM tags WHERE id = ?')
