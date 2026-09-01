@@ -42,6 +42,7 @@ export type Comment = {
   body: string
   status: 'approved' | 'hidden'
   is_admin: number
+  is_private: number
   created_at: string
   post_title?: string
   post_slug?: string
@@ -113,6 +114,7 @@ db.exec(`
     body TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'approved' CHECK(status IN ('approved','hidden')),
     is_admin INTEGER NOT NULL DEFAULT 0,
+    is_private INTEGER NOT NULL DEFAULT 0,
     author_key TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -130,6 +132,8 @@ db.exec(`
 const postColumns = new Set((db.prepare('PRAGMA table_info(posts)').all() as { name: string }[]).map(column => column.name))
 if (!postColumns.has('cover_image')) db.exec("ALTER TABLE posts ADD COLUMN cover_image TEXT NOT NULL DEFAULT ''")
 if (!postColumns.has('cover_alt')) db.exec("ALTER TABLE posts ADD COLUMN cover_alt TEXT NOT NULL DEFAULT ''")
+const commentColumns = new Set((db.prepare('PRAGMA table_info(comments)').all() as { name: string }[]).map(column => column.name))
+if (!commentColumns.has('is_private')) db.exec('ALTER TABLE comments ADD COLUMN is_private INTEGER NOT NULL DEFAULT 0')
 
 function slugify(value: string) {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -330,22 +334,22 @@ export function getAnalytics({ days = 30, path: selectedPath = '' }: { days?: nu
 }
 
 export function getApprovedComments(postId: number) {
-  return db.prepare(`SELECT id,post_id,parent_id,name,body,status,is_admin,created_at FROM comments
-    WHERE post_id = ? AND status = 'approved' ORDER BY created_at`).all(postId) as Comment[]
+  return db.prepare(`SELECT id,post_id,parent_id,name,body,status,is_admin,is_private,created_at FROM comments
+    WHERE post_id = ? AND status = 'approved' AND is_private = 0 ORDER BY created_at`).all(postId) as Comment[]
 }
 
-export function createPublicComment(input: { postId: number; name: string; body: string; authorKey: string }) {
+export function createPublicComment(input: { postId: number; name: string; body: string; authorKey: string; isPrivate: boolean }) {
   const post = db.prepare('SELECT id FROM posts WHERE id = ? AND published = 1').get(input.postId)
   if (!post) throw new Error('Post not found')
   const recent = Number((db.prepare(`SELECT COUNT(*) AS count FROM comments WHERE author_key = ? AND created_at >= datetime('now', '-1 hour')`).get(input.authorKey) as { count: number }).count)
   if (recent >= 3) throw new Error('Please wait before posting another comment.')
   const duplicate = db.prepare(`SELECT id FROM comments WHERE author_key = ? AND body = ? AND created_at >= datetime('now', '-1 day')`).get(input.authorKey, input.body)
   if (duplicate) throw new Error('That comment has already been posted.')
-  return Number(db.prepare(`INSERT INTO comments (post_id,name,body,author_key) VALUES (?,?,?,?)`).run(input.postId, input.name, input.body, input.authorKey).lastInsertRowid)
+  return Number(db.prepare(`INSERT INTO comments (post_id,name,body,author_key,is_private) VALUES (?,?,?,?,?)`).run(input.postId, input.name, input.body, input.authorKey, Number(input.isPrivate)).lastInsertRowid)
 }
 
 export function getCommentsForAdmin() {
-  return db.prepare(`SELECT comments.id,comments.post_id,comments.parent_id,comments.name,comments.body,comments.status,comments.is_admin,comments.created_at,
+  return db.prepare(`SELECT comments.id,comments.post_id,comments.parent_id,comments.name,comments.body,comments.status,comments.is_admin,comments.is_private,comments.created_at,
       posts.title AS post_title, posts.slug AS post_slug
     FROM comments JOIN posts ON posts.id = comments.post_id
     ORDER BY comments.created_at DESC`).all() as Comment[]
@@ -360,9 +364,9 @@ export function deleteComment(id: number) {
 }
 
 export function replyToComment(id: number, body: string) {
-  const parent = db.prepare('SELECT id, post_id FROM comments WHERE id = ?').get(id) as { id: number; post_id: number } | undefined
+  const parent = db.prepare('SELECT id, post_id, is_private FROM comments WHERE id = ?').get(id) as { id: number; post_id: number; is_private: number } | undefined
   if (!parent) throw new Error('Comment not found')
-  db.prepare(`INSERT INTO comments (post_id,parent_id,name,body,status,is_admin) VALUES (?,?,? ,?,'approved',1)`).run(parent.post_id, parent.id, 'Aditya', body)
+  db.prepare(`INSERT INTO comments (post_id,parent_id,name,body,status,is_admin,is_private) VALUES (?,?,?,?,'approved',1,?)`).run(parent.post_id, parent.id, 'Aditya', body, parent.is_private)
   return parent.post_id
 }
 

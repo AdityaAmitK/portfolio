@@ -266,6 +266,8 @@ img { display: block; max-width: 100%; }
 .comment-reply small { padding: 3px 6px; border-radius: 999px; background: var(--signal); color: var(--paper); font: 400 8px/1 var(--font-utility); text-transform: uppercase; }
 .comment-form { position: relative; display: grid; gap: 15px; margin-top: 30px; padding: 22px; border: 1px solid var(--line); background: var(--paper-deep); }
 .comment-form .field textarea { min-height: 120px; resize: vertical; font-family: var(--font-body); }
+.comment-private { display: flex; align-items: center; gap: 8px; width: fit-content; color: var(--muted); font: 400 11px/1.4 var(--font-utility); cursor: pointer; }
+.comment-private input { margin: 0; accent-color: var(--ink); }
 .comment-form__footer { display: flex; align-items: center; gap: 14px; }
 .comment-submit { border: 1px solid var(--ink); background: var(--ink); color: var(--paper); padding: 9px 13px; cursor: pointer; }
 .comment-submit:disabled { opacity: .6; cursor: wait; }

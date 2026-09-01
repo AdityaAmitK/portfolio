@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     if (!Number.isInteger(postId) || name.length < 2 || comment.length < 2) return Response.json({ error: 'Add your name and a comment.' }, { status: 400 })
     if (profanity.check(`${name} ${comment}`)) return Response.json({ error: 'Please remove offensive language before commenting.' }, { status: 422 })
     if ((comment.match(/https?:\/\//gi) || []).length > 2) return Response.json({ error: 'Please remove the extra links from your comment.' }, { status: 422 })
-    createPublicComment({ postId, name, body: comment, authorKey: authorKey(request) })
+    createPublicComment({ postId, name, body: comment, authorKey: authorKey(request), isPrivate: body.isPrivate === true })
     const post = getPostById(postId)
     if (post) revalidatePath(`/writing/${post.slug}`)
     return Response.json({ ok: true }, { status: 201 })
