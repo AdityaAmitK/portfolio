@@ -6,9 +6,10 @@ import type { Post, Tag } from '@/lib/db'
 import { upsertPost } from '@/app/admin/actions'
 import { Markdown } from './markdown'
 
-async function uploadImage(file: File) {
+async function uploadImage(file: File, social = false) {
   const data = new FormData()
   data.set('file', file)
+  if (social) data.set('social', '1')
   const response = await fetch('/api/admin/uploads', { method: 'POST', body: data })
   const result = await response.json() as { url?: string; error?: string }
   if (!response.ok || !result.url) throw new Error(result.error || 'Upload failed.')
@@ -64,7 +65,7 @@ export function PostEditor({ post, tags }: { post?: Post; tags: Tag[] }) {
   async function uploadCoverImage(file: File) {
     try {
       setUploadStatus('Uploading cover image…')
-      setCoverImage(await uploadImage(file))
+      setCoverImage(await uploadImage(file, true))
       setUploadStatus('Cover image uploaded.')
     } catch (error) {
       setUploadStatus(error instanceof Error ? error.message : 'Upload failed.')

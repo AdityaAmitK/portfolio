@@ -20,6 +20,20 @@ export type Post = {
   updated_at: string
 }
 
+export type AnalyticsEventInput = {
+  sessionId: string
+  type: 'pageview' | 'engaged' | 'scroll' | 'duration' | 'click'
+  path: string
+  referrer?: string
+  source?: string
+  medium?: string
+  campaign?: string
+  target?: string
+  value?: number
+  country?: string
+  device?: string
+}
+
 type PostRow = Omit<Post, 'tags'> & { category: string }
 type PostInput = Pick<Post, 'slug' | 'title' | 'description' | 'body' | 'cover_image' | 'cover_alt' | 'published'> & { id?: number; tagIds: number[] }
 
@@ -30,6 +44,7 @@ fs.mkdirSync(path.dirname(databasePath), { recursive: true })
 
 const db = new Database(databasePath)
 db.pragma('busy_timeout = 5000')
+db.pragma('journal_mode = WAL')
 db.pragma('foreign_keys = ON')
 db.exec(`
   CREATE TABLE IF NOT EXISTS posts (
@@ -59,6 +74,24 @@ db.exec(`
     value TEXT NOT NULL,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
+  CREATE TABLE IF NOT EXISTS analytics_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    path TEXT NOT NULL,
+    referrer TEXT NOT NULL DEFAULT '',
+    source TEXT NOT NULL DEFAULT 'direct',
+    medium TEXT NOT NULL DEFAULT '',
+    campaign TEXT NOT NULL DEFAULT '',
+    target TEXT NOT NULL DEFAULT '',
+    value INTEGER,
+    country TEXT NOT NULL DEFAULT '',
+    device TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS analytics_created_at ON analytics_events(created_at);
+  CREATE INDEX IF NOT EXISTS analytics_path_created_at ON analytics_events(path, created_at);
+  CREATE INDEX IF NOT EXISTS analytics_session_id ON analytics_events(session_id);
 `)
 
 const postColumns = new Set((db.prepare('PRAGMA table_info(posts)').all() as { name: string }[]).map(column => column.name))
@@ -206,4 +239,59 @@ export function getManagedContent(): ManagedContent {
 
 export function saveManagedContent(content: ManagedContent) {
   db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(content), 'managed-content')
+}
+
+export function recordAnalyticsEvent(event: AnalyticsEventInput) {
+  db.prepare(`INSERT INTO analytics_events
+    (session_id,event_type,path,referrer,source,medium,campaign,target,value,country,device)
+    VALUES (@sessionId,@type,@path,@referrer,@source,@medium,@campaign,@target,@value,@country,@device)`)
+    .run({ referrer: '', source: 'direct', medium: '', campaign: '', target: '', value: null, country: '', device: '', ...event })
+}
+
+export function getAnalytics({ days = 30, path: selectedPath = '' }: { days?: number; path?: string } = {}) {
+  const params = { since: `-${Math.max(1, Math.min(days, 365))} days`, path: selectedPath }
+  const filter = `created_at >= datetime('now', @since) AND (@path = '' OR path = @path)`
+  const overview = db.prepare(`SELECT
+      SUM(event_type = 'pageview') AS views,
+      COUNT(DISTINCT CASE WHEN event_type = 'pageview' THEN session_id END) AS sessions,
+      COUNT(DISTINCT CASE WHEN event_type = 'engaged' THEN session_id END) AS engaged,
+      COUNT(DISTINCT CASE WHEN event_type = 'scroll' AND value >= 90 THEN session_id END) AS completed,
+      COALESCE(SUM(CASE WHEN event_type = 'duration' THEN value ELSE 0 END), 0) AS active_seconds
+    FROM analytics_events WHERE ${filter}`).get(params) as { views: number; sessions: number; engaged: number; completed: number; active_seconds: number }
+  const daily = db.prepare(`SELECT substr(created_at, 1, 10) AS day,
+      SUM(event_type = 'pageview') AS views,
+      COUNT(DISTINCT CASE WHEN event_type = 'pageview' THEN session_id END) AS sessions
+    FROM analytics_events WHERE ${filter} GROUP BY day ORDER BY day`).all(params) as { day: string; views: number; sessions: number }[]
+  const pages = db.prepare(`SELECT path,
+      SUM(event_type = 'pageview') AS views,
+      COUNT(DISTINCT CASE WHEN event_type = 'pageview' THEN session_id END) AS sessions,
+      COUNT(DISTINCT CASE WHEN event_type = 'engaged' THEN session_id END) AS engaged,
+      COUNT(DISTINCT CASE WHEN event_type = 'scroll' AND value >= 90 THEN session_id END) AS completed,
+      COALESCE(SUM(CASE WHEN event_type = 'duration' THEN value ELSE 0 END), 0) AS active_seconds
+    FROM analytics_events WHERE created_at >= datetime('now', @since) AND event_type IN ('pageview','engaged','scroll','duration')
+    GROUP BY path ORDER BY views DESC LIMIT 50`).all(params) as { path: string; views: number; sessions: number; engaged: number; completed: number; active_seconds: number }[]
+  const sources = db.prepare(`SELECT source, COUNT(*) AS views, COUNT(DISTINCT session_id) AS sessions
+    FROM analytics_events WHERE ${filter} AND event_type = 'pageview'
+    GROUP BY source ORDER BY views DESC LIMIT 20`).all(params) as { source: string; views: number; sessions: number }[]
+  const clicks = db.prepare(`SELECT target, COUNT(*) AS clicks, COUNT(DISTINCT session_id) AS sessions
+    FROM analytics_events WHERE ${filter} AND event_type = 'click' AND target <> ''
+    GROUP BY target ORDER BY clicks DESC LIMIT 20`).all(params) as { target: string; clicks: number; sessions: number }[]
+  const countries = db.prepare(`SELECT country, COUNT(DISTINCT session_id) AS sessions
+    FROM analytics_events WHERE ${filter} AND event_type = 'pageview' AND country <> ''
+    GROUP BY country ORDER BY sessions DESC LIMIT 20`).all(params) as { country: string; sessions: number }[]
+  const devices = db.prepare(`SELECT device, COUNT(DISTINCT session_id) AS sessions
+    FROM analytics_events WHERE ${filter} AND event_type = 'pageview' AND device <> ''
+    GROUP BY device ORDER BY sessions DESC`).all(params) as { device: string; sessions: number }[]
+  const journeys = db.prepare(`WITH matching_sessions AS (
+      SELECT DISTINCT session_id FROM analytics_events WHERE ${filter}
+    ), ordered_pages AS (
+      SELECT events.session_id, events.path, events.source, events.created_at
+      FROM analytics_events events JOIN matching_sessions USING (session_id)
+      WHERE events.event_type = 'pageview' AND events.created_at >= datetime('now', @since)
+      ORDER BY events.created_at
+    )
+    SELECT session_id, MIN(created_at) AS started_at, MAX(created_at) AS last_at,
+      MIN(source) AS source, COUNT(*) AS pageviews, GROUP_CONCAT(path, ' → ') AS pages
+    FROM ordered_pages GROUP BY session_id ORDER BY last_at DESC LIMIT 20`).all(params) as { session_id: string; started_at: string; last_at: string; source: string; pageviews: number; pages: string }[]
+  return { overview, daily, pages, sources, clicks, countries, devices, journeys }
 }

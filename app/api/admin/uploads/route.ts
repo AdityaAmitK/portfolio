@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import sharp from 'sharp'
 import { isAuthenticated } from '@/lib/auth'
 import { uploadDirectory } from '@/lib/uploads'
 
@@ -16,13 +17,19 @@ export async function POST(request: Request) {
   if (!(await isAuthenticated())) return Response.json({ error: 'Unauthorized' }, { status: 401 })
   if (Number(request.headers.get('content-length') || 0) > MAX_SIZE + 1024 * 100) return Response.json({ error: 'Image must be smaller than 8 MB.' }, { status: 413 })
 
-  const file = (await request.formData()).get('file')
+  const formData = await request.formData()
+  const file = formData.get('file')
   if (!(file instanceof File)) return Response.json({ error: 'Choose an image to upload.' }, { status: 400 })
   const extension = extensions[file.type]
   if (!extension) return Response.json({ error: 'Use a JPEG, PNG, WebP, or GIF image.' }, { status: 415 })
   if (file.size > MAX_SIZE) return Response.json({ error: 'Image must be smaller than 8 MB.' }, { status: 413 })
 
   const filename = `${Date.now()}-${randomUUID()}.${extension}`
-  await writeFile(path.join(uploadDirectory, filename), new Uint8Array(await file.arrayBuffer()))
+  const bytes = new Uint8Array(await file.arrayBuffer())
+  await writeFile(path.join(uploadDirectory, filename), bytes)
+  if (formData.get('social') === '1') {
+    const socialFilename = `${path.parse(filename).name}-social.jpg`
+    await sharp(bytes).resize(1200, 630, { fit: 'cover' }).jpeg({ quality: 78, mozjpeg: true }).toFile(path.join(uploadDirectory, socialFilename))
+  }
   return Response.json({ url: `/uploads/${filename}` })
 }

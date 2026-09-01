@@ -11,3 +11,9 @@ export const uploadDirectory = process.env.UPLOAD_DIR
   : path.join(path.dirname(databasePath), 'uploads')
 
 fs.mkdirSync(uploadDirectory, { recursive: true })
+
+export function socialImageFor(imageUrl: string) {
+  const parsed = path.parse(path.basename(imageUrl))
+  const filename = `${parsed.name}-social.jpg`
+  return fs.existsSync(path.join(uploadDirectory, filename)) ? `/uploads/${filename}` : imageUrl
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { AnalyticsTracker } from '@/components/analytics-tracker'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Header />
         {children}
         <Footer />
+        <AnalyticsTracker />
       </body>
     </html>
   )
