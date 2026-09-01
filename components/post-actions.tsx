@@ -21,11 +21,11 @@ export function PostActions({ slug, published, previewUrl, compact = false }: { 
   return <div className={`post-actions${compact ? ' post-actions--compact' : ''}`}>
     <a className="admin-button admin-button--secondary" href={published ? publicUrl : previewUrl} target="_blank" rel="noreferrer">Preview ↗</a>
     <button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink(published ? 'Public link' : 'Preview link', published ? publicUrl : previewUrl)}>{copied || (published ? 'Copy public link' : 'Copy 24h preview')}</button>
-    {published && !compact && <>
+    {published && <>
       <button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink('WhatsApp link', tracked('whatsapp'))}>WhatsApp</button>
       <button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink('Instagram link', tracked('instagram'))}>Instagram</button>
-      <button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink('X link', tracked('x'))}>X</button>
-      <button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink('LinkedIn link', tracked('linkedin'))}>LinkedIn</button>
+      {!compact && <><button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink('X link', tracked('x'))}>X</button><button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink('LinkedIn link', tracked('linkedin'))}>LinkedIn</button></>}
     </>}
+    {published && compact && <a className="admin-button admin-button--secondary" href={`/admin/analytics?path=${encodeURIComponent(`/writing/${slug}`)}`}>Analytics</a>}
   </div>
 }

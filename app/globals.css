@@ -288,7 +288,7 @@ img { display: block; max-width: 100%; }
 .admin-list__row { display: grid; grid-template-columns: 1fr auto auto auto; gap: 20px; align-items: center; border-bottom: 1px solid var(--line); padding: 16px 0; }
 .admin-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; }
 .post-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: -12px 0 28px; }
-.post-actions--compact { margin: 0; flex-wrap: nowrap; }
+.post-actions--compact { max-width: 520px; margin: 0; justify-content: flex-end; }
 .post-actions--compact .admin-button { padding: 7px 10px; font-size: 11px; }
 .analytics-range { display: flex; gap: 8px; margin: -10px 0 24px; }
 .analytics-range a { border: 1px solid var(--line); padding: 7px 10px; color: var(--muted); font: 400 10px/1.4 var(--font-utility); }
