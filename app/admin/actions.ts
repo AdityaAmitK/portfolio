@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createSession, destroySession, isAuthenticated, passwordsMatch } from '@/lib/auth'
-import { deletePost, deleteTag as deleteTagRecord, saveManagedContent, savePost, saveTag as saveTagRecord } from '@/lib/db'
+import { deleteComment as deleteCommentRecord, deletePost, deleteTag as deleteTagRecord, moderateComment as moderateCommentRecord, replyToComment as replyToCommentRecord, saveManagedContent, savePost, saveTag as saveTagRecord } from '@/lib/db'
 import type { ManagedContent } from '@/lib/content'
 
 export async function login(formData: FormData) {
@@ -81,4 +81,26 @@ export async function updateContent(formData: FormData) {
   revalidatePath('/projects')
   revalidatePath('/tools')
   redirect('/admin/content?saved=1')
+}
+
+export async function moderateComment(formData: FormData) {
+  if (!(await isAuthenticated())) redirect('/admin/login')
+  const id = Number(formData.get('id'))
+  const action = String(formData.get('action'))
+  if (!Number.isInteger(id)) throw new Error('Invalid comment')
+  if (action === 'delete') deleteCommentRecord(id)
+  else if (action === 'approved' || action === 'hidden') moderateCommentRecord(id, action)
+  else throw new Error('Invalid moderation action')
+  revalidatePath('/writing/[slug]', 'page')
+  revalidatePath('/admin/comments')
+}
+
+export async function replyToComment(formData: FormData) {
+  if (!(await isAuthenticated())) redirect('/admin/login')
+  const id = Number(formData.get('id'))
+  const body = String(formData.get('body') || '').trim().slice(0, 1500)
+  if (!Number.isInteger(id) || !body) throw new Error('Reply is required')
+  replyToCommentRecord(id, body)
+  revalidatePath('/writing/[slug]', 'page')
+  revalidatePath('/admin/comments')
 }

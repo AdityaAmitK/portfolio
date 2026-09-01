@@ -21,5 +21,5 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const url = `https://adityakinjawadekar.com/writing/${post.slug}`
   const coverUrl = post.cover_image ? new URL(post.cover_image, 'https://adityakinjawadekar.com').toString() : undefined
   const articleJsonLd = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.title, description: post.description, image: coverUrl, url, mainEntityOfPage: url, datePublished: post.published_at || post.created_at, dateModified: post.updated_at, author: { '@type': 'Person', name: 'Aditya Kinjawadekar', url: 'https://adityakinjawadekar.com' }, keywords: post.tags.map(tag => tag.name) }
-  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd).replace(/</g, '\\u003c') }} /><Article post={post} /></>
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd).replace(/</g, '\\u003c') }} /><Article post={post} engagement /></>
 }

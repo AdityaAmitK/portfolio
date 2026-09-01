@@ -34,6 +34,19 @@ export type AnalyticsEventInput = {
   device?: string
 }
 
+export type Comment = {
+  id: number
+  post_id: number
+  parent_id: number | null
+  name: string
+  body: string
+  status: 'approved' | 'hidden'
+  is_admin: number
+  created_at: string
+  post_title?: string
+  post_slug?: string
+}
+
 type PostRow = Omit<Post, 'tags'> & { category: string }
 type PostInput = Pick<Post, 'slug' | 'title' | 'description' | 'body' | 'cover_image' | 'cover_alt' | 'published'> & { id?: number; tagIds: number[] }
 
@@ -92,6 +105,26 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS analytics_created_at ON analytics_events(created_at);
   CREATE INDEX IF NOT EXISTS analytics_path_created_at ON analytics_events(path, created_at);
   CREATE INDEX IF NOT EXISTS analytics_session_id ON analytics_events(session_id);
+  CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    parent_id INTEGER REFERENCES comments(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    body TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'approved' CHECK(status IN ('approved','hidden')),
+    is_admin INTEGER NOT NULL DEFAULT 0,
+    author_key TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS comments_post_status ON comments(post_id, status, created_at);
+  CREATE INDEX IF NOT EXISTS comments_author_created ON comments(author_key, created_at);
+  CREATE TABLE IF NOT EXISTS post_likes (
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    visitor_id TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (post_id, visitor_id)
+  );
 `)
 
 const postColumns = new Set((db.prepare('PRAGMA table_info(posts)').all() as { name: string }[]).map(column => column.name))
@@ -294,4 +327,60 @@ export function getAnalytics({ days = 30, path: selectedPath = '' }: { days?: nu
       MIN(source) AS source, COUNT(*) AS pageviews, GROUP_CONCAT(path, ' → ') AS pages
     FROM ordered_pages GROUP BY session_id ORDER BY last_at DESC LIMIT 20`).all(params) as { session_id: string; started_at: string; last_at: string; source: string; pageviews: number; pages: string }[]
   return { overview, daily, pages, sources, clicks, countries, devices, journeys }
+}
+
+export function getApprovedComments(postId: number) {
+  return db.prepare(`SELECT id,post_id,parent_id,name,body,status,is_admin,created_at FROM comments
+    WHERE post_id = ? AND status = 'approved' ORDER BY created_at`).all(postId) as Comment[]
+}
+
+export function createPublicComment(input: { postId: number; name: string; body: string; authorKey: string }) {
+  const post = db.prepare('SELECT id FROM posts WHERE id = ? AND published = 1').get(input.postId)
+  if (!post) throw new Error('Post not found')
+  const recent = Number((db.prepare(`SELECT COUNT(*) AS count FROM comments WHERE author_key = ? AND created_at >= datetime('now', '-1 hour')`).get(input.authorKey) as { count: number }).count)
+  if (recent >= 3) throw new Error('Please wait before posting another comment.')
+  const duplicate = db.prepare(`SELECT id FROM comments WHERE author_key = ? AND body = ? AND created_at >= datetime('now', '-1 day')`).get(input.authorKey, input.body)
+  if (duplicate) throw new Error('That comment has already been posted.')
+  return Number(db.prepare(`INSERT INTO comments (post_id,name,body,author_key) VALUES (?,?,?,?)`).run(input.postId, input.name, input.body, input.authorKey).lastInsertRowid)
+}
+
+export function getCommentsForAdmin() {
+  return db.prepare(`SELECT comments.id,comments.post_id,comments.parent_id,comments.name,comments.body,comments.status,comments.is_admin,comments.created_at,
+      posts.title AS post_title, posts.slug AS post_slug
+    FROM comments JOIN posts ON posts.id = comments.post_id
+    ORDER BY comments.created_at DESC`).all() as Comment[]
+}
+
+export function moderateComment(id: number, status: Comment['status']) {
+  db.prepare('UPDATE comments SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(status, id)
+}
+
+export function deleteComment(id: number) {
+  db.prepare('DELETE FROM comments WHERE id = ?').run(id)
+}
+
+export function replyToComment(id: number, body: string) {
+  const parent = db.prepare('SELECT id, post_id FROM comments WHERE id = ?').get(id) as { id: number; post_id: number } | undefined
+  if (!parent) throw new Error('Comment not found')
+  db.prepare(`INSERT INTO comments (post_id,parent_id,name,body,status,is_admin) VALUES (?,?,? ,?,'approved',1)`).run(parent.post_id, parent.id, 'Aditya', body)
+  return parent.post_id
+}
+
+export function getPostLikeCount(postId: number) {
+  return Number((db.prepare('SELECT COUNT(*) AS count FROM post_likes WHERE post_id = ?').get(postId) as { count: number }).count)
+}
+
+export function hasPostLike(postId: number, visitorId: string) {
+  return Boolean(db.prepare('SELECT 1 FROM post_likes WHERE post_id = ? AND visitor_id = ?').get(postId, visitorId))
+}
+
+export function togglePostLike(postId: number, visitorId: string) {
+  const post = db.prepare('SELECT id FROM posts WHERE id = ? AND published = 1').get(postId)
+  if (!post) throw new Error('Post not found')
+  if (hasPostLike(postId, visitorId)) {
+    db.prepare('DELETE FROM post_likes WHERE post_id = ? AND visitor_id = ?').run(postId, visitorId)
+    return { liked: false, count: getPostLikeCount(postId) }
+  }
+  db.prepare('INSERT INTO post_likes (post_id, visitor_id) VALUES (?, ?)').run(postId, visitorId)
+  return { liked: true, count: getPostLikeCount(postId) }
 }
