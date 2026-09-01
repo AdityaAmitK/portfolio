@@ -258,7 +258,7 @@ export function getAnalytics({ days = 30, path: selectedPath = '' }: { days?: nu
       COUNT(DISTINCT CASE WHEN event_type = 'scroll' AND value >= 90 THEN session_id END) AS completed,
       COALESCE(SUM(CASE WHEN event_type = 'duration' THEN value ELSE 0 END), 0) AS active_seconds
     FROM analytics_events WHERE ${filter}`).get(params) as { views: number; sessions: number; engaged: number; completed: number; active_seconds: number }
-  const daily = db.prepare(`SELECT substr(created_at, 1, 10) AS day,
+  const daily = db.prepare(`SELECT date(created_at, '+5 hours', '+30 minutes') AS day,
       SUM(event_type = 'pageview') AS views,
       COUNT(DISTINCT CASE WHEN event_type = 'pageview' THEN session_id END) AS sessions
     FROM analytics_events WHERE ${filter} GROUP BY day ORDER BY day`).all(params) as { day: string; views: number; sessions: number }[]

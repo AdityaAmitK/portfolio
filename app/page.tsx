@@ -35,7 +35,7 @@ export default function Home() {
 
       <section className="shell section">
         <div className="section-head"><h2>Recent writing</h2><Link className="section-link" href="/writing">All writing →</Link></div>
-        {posts.length ? <div className="writing-list">{posts.map(post => <Link href={`/writing/${post.slug}`} className="post-row" key={post.id}><div><h3>{post.title}</h3><p>{post.description}</p></div><time>{new Date(post.published_at || post.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</time></Link>)}</div> : <div className="empty-note">No posts yet.</div>}
+        {posts.length ? <div className="writing-list">{posts.map(post => <Link href={`/writing/${post.slug}`} className="post-row" key={post.id}><div><h3>{post.title}</h3><p>{post.description}</p></div><time>{new Date(post.published_at || post.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' })}</time></Link>)}</div> : <div className="empty-note">No posts yet.</div>}
       </section>
 
       <section className="shell section">
