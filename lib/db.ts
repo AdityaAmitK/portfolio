@@ -218,6 +218,18 @@ if (contentVersion < 6) {
   db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '6') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
 
+if (contentVersion < 7) {
+  const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+  const parsedContent = JSON.parse(storedContent.value) as ManagedContent
+  const canonicalProjects = new Map(projects.map(project => [project.slug, project]))
+  parsedContent.projects = parsedContent.projects.map(project => {
+    const canonical = canonicalProjects.get(project.slug)
+    return { ...project, marketplaceHref: canonical?.marketplaceHref, installCommand: canonical?.installCommand }
+  })
+  db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '7') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
+}
+
 function tagsForPost(postId: number) {
   return db.prepare(`SELECT tags.id, tags.name, tags.slug FROM tags JOIN post_tags ON post_tags.tag_id = tags.id WHERE post_tags.post_id = ? ORDER BY tags.name COLLATE NOCASE`).all(postId) as Tag[]
 }

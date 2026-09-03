@@ -8,6 +8,8 @@ export type Project = {
   repoHref?: string
   demoHref?: string
   liveHref?: string
+  marketplaceHref?: string
+  installCommand?: string
   tags: string[]
   featured: boolean
 }
@@ -70,6 +72,7 @@ export const projects: Project[] = [
     image: '/images/projects/git-blocker-demo.png',
     imageAlt: 'Git Blocker preventing a secret file from being committed',
     liveHref: 'https://www.npmjs.com/package/git-blocker',
+    installCommand: 'npm install -g git-blocker',
     tags: ['Node.js', 'CLI', 'Git'],
     featured: false,
   },
@@ -81,6 +84,7 @@ export const projects: Project[] = [
     image: '/images/projects/strapi-service-navigation-demo.gif',
     imageAlt: 'Command-click navigation from a Strapi route to its controller',
     repoHref: 'https://github.com/AdityaAmitK/strapi-service-navigation',
+    marketplaceHref: 'https://marketplace.visualstudio.com/items?itemName=aditya-amit-k.strapi-service-navigation',
     tags: ['TypeScript', 'VS Code', 'Strapi'],
     featured: false,
   },
@@ -92,6 +96,7 @@ export const projects: Project[] = [
     image: '/images/projects/next-sweep-demo.png',
     imageAlt: 'Next Sweep finding and removing a Next.js build folder',
     liveHref: 'https://www.npmjs.com/package/next-sweep',
+    installCommand: 'npm install -g next-sweep',
     tags: ['Node.js', 'CLI', 'Next.js'],
     featured: false,
   },
