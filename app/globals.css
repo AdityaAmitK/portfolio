@@ -307,6 +307,7 @@ img { display: block; max-width: 100%; }
 .cover-editor small { color: var(--muted); font-size: 11px; }
 .cover-editor__preview { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: end; }
 .cover-editor__preview img { width: 100%; max-height: 280px; object-fit: cover; border: 1px solid var(--line); }
+.project-image-editor__path { grid-column: 1 / -1; }
 .upload-status { margin: 0; color: var(--muted); font-size: 12px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .checkbox { display: flex; gap: 9px; align-items: center; }
