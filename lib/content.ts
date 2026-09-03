@@ -42,6 +42,16 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    slug: 'stride-and-scale',
+    title: 'Stride & Scale',
+    year: 2026,
+    summary: 'A focused steps and weight tracker with progress trends, configurable goals, manual weigh-ins, and optional Apple Health syncing through Shortcuts.',
+    repoHref: 'https://github.com/AdityaAmitK/stride-and-scale',
+    demoHref: 'https://demos.adityakinjawadekar.com/stride-and-scale/',
+    tags: ['React', 'TypeScript', 'PostgreSQL', 'Apple Health'],
+    featured: true,
+  },
+  {
     slug: 'iphone-mac-keyboard',
     title: 'iPhone Mac Keyboard',
     year: 2026,

@@ -209,6 +209,15 @@ if (contentVersion < 5) {
   db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '5') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
 
+if (contentVersion < 6) {
+  const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+  const parsedContent = JSON.parse(storedContent.value) as ManagedContent
+  const strideAndScale = projects.find(project => project.slug === 'stride-and-scale')!
+  if (!parsedContent.projects.some(project => project.slug === strideAndScale.slug)) parsedContent.projects.unshift(strideAndScale)
+  db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '6') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
+}
+
 function tagsForPost(postId: number) {
   return db.prepare(`SELECT tags.id, tags.name, tags.slug FROM tags JOIN post_tags ON post_tags.tag_id = tags.id WHERE post_tags.post_id = ? ORDER BY tags.name COLLATE NOCASE`).all(postId) as Tag[]
 }
