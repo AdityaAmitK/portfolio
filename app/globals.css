@@ -175,6 +175,7 @@ img { display: block; max-width: 100%; }
 .project-entry__image--contain img { object-fit: contain; max-height: 620px; background: #fff; }
 .project-entry__body { max-width: 700px; }
 .project-entry__body p { margin: 0; color: var(--muted); }
+.project-entry__links { display: flex; flex-wrap: wrap; gap: 12px 20px; }
 .project-entry__link { display: inline-block; margin-top: 20px; font: 400 11px/1.4 var(--font-utility); letter-spacing: .07em; text-transform: uppercase; border-bottom: 1px solid var(--ink); }
 .project-entry__link:hover { color: var(--signal); border-color: var(--signal); }
 

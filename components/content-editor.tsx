@@ -47,11 +47,12 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
                   <div className="field"><label>Year</label><input type="number" value={project.year} onChange={event => updateProject(index, { year: Number(event.target.value) })} /></div>
                   <div className="field"><label>Tags (comma separated)</label><input value={project.tags.join(', ')} onChange={event => updateProject(index, { tags: event.target.value.split(',').map(tag => tag.trim()).filter(Boolean) })} /></div>
                 </div>
+                <div className="field"><label>Image path</label><input value={project.image || ''} onChange={event => updateProject(index, { image: event.target.value })} /></div>
                 <div className="form-row">
-                  <div className="field"><label>Image path</label><input value={project.image || ''} onChange={event => updateProject(index, { image: event.target.value })} /></div>
-                  <div className="field"><label>External link</label><input type="url" value={project.href || ''} onChange={event => updateProject(index, { href: event.target.value || undefined })} /></div>
+                  <div className="field"><label>Repository (optional)</label><input type="url" placeholder="https://github.com/..." value={project.repoHref || ''} onChange={event => updateProject(index, { repoHref: event.target.value || undefined })} /></div>
+                  <div className="field"><label>Demo (optional)</label><input type="url" placeholder="https://demos..." value={project.demoHref || ''} onChange={event => updateProject(index, { demoHref: event.target.value || undefined })} /></div>
                 </div>
-                <div className="field"><label>Link label</label><input value={project.linkLabel || ''} onChange={event => updateProject(index, { linkLabel: event.target.value || undefined })} /></div>
+                <div className="field"><label>Live implementation (optional)</label><input type="url" placeholder="https://..." value={project.liveHref || ''} onChange={event => updateProject(index, { liveHref: event.target.value || undefined })} /></div>
                 <label className="checkbox"><input type="checkbox" checked={project.featured} onChange={event => updateProject(index, { featured: event.target.checked })} /> Featured on homepage</label>
                 <button type="button" className="admin-button admin-button--danger" onClick={() => setContent(value => ({ ...value, projects: value.projects.filter((_, i) => i !== index) }))}>Remove project</button>
               </div>

@@ -5,8 +5,9 @@ export type Project = {
   summary: string
   image?: string
   imageAlt?: string
-  href?: string
-  linkLabel?: string
+  repoHref?: string
+  demoHref?: string
+  liveHref?: string
   tags: string[]
   featured: boolean
 }
@@ -23,6 +24,8 @@ export const projects: Project[] = [
     summary: 'A private trading control room for research, backtests, portfolio guardrails, scheduled execution, and live market monitoring. It brings strategy research and day-to-day operation into one clear interface.',
     image: '/images/projects/algodesk-demo.jpg',
     imageAlt: 'AlgoDesk trading overview with anonymised sample data',
+    repoHref: 'https://github.com/AdityaAmitK/algodesk',
+    demoHref: 'https://demos.adityakinjawadekar.com/algotrading/',
     tags: ['Python', 'Next.js', 'PostgreSQL', 'Trading systems'],
     featured: true,
   },
@@ -33,6 +36,8 @@ export const projects: Project[] = [
     summary: 'A private personal finance desk built around one useful question: how much is safe to use before the next salary window? It connects commitments, accounts, recurring expenses, investments, and recent activity.',
     image: '/images/projects/rupee-ledger-demo.jpg',
     imageAlt: 'Rupee Ledger dashboard with anonymised sample data',
+    repoHref: 'https://github.com/AdityaAmitK/rupee-ledger-open-source',
+    demoHref: 'https://demos.adityakinjawadekar.com/expensetracker/',
     tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Personal finance'],
     featured: true,
   },
@@ -43,8 +48,7 @@ export const projects: Project[] = [
     summary: 'A local-first companion that turns an iPhone into a secure nearby keyboard and command pad for macOS. Built for the moments when the Mac is connected to a distant display and the keyboard is not.',
     image: '/images/projects/iphone-mac-keyboard.png',
     imageAlt: 'Mac Keyboard iPhone application connected to a MacBook Pro',
-    href: 'https://github.com/AdityaAmitK/iphone-mac-keyboard',
-    linkLabel: 'view source',
+    repoHref: 'https://github.com/AdityaAmitK/iphone-mac-keyboard',
     tags: ['Swift', 'macOS', 'iOS', 'Local networking'],
     featured: true,
   },
@@ -55,8 +59,7 @@ export const projects: Project[] = [
     summary: 'A small CLI guardrail that stops sensitive or important files from slipping into a Git commit. Rules live with the repository and the prompt explains exactly what was blocked and why.',
     image: '/images/projects/git-blocker-demo.png',
     imageAlt: 'Git Blocker preventing a secret file from being committed',
-    href: 'https://www.npmjs.com/package/git-blocker',
-    linkLabel: 'view on npm',
+    liveHref: 'https://www.npmjs.com/package/git-blocker',
     tags: ['Node.js', 'CLI', 'Git'],
     featured: false,
   },
@@ -67,8 +70,7 @@ export const projects: Project[] = [
     summary: 'A VS Code extension for jumping from Strapi route handlers directly to their controller or service implementation. It supports JavaScript and TypeScript Strapi projects.',
     image: '/images/projects/strapi-service-navigation-demo.gif',
     imageAlt: 'Command-click navigation from a Strapi route to its controller',
-    href: 'https://github.com/AdityaAmitK/strapi-service-navigation',
-    linkLabel: 'view source',
+    repoHref: 'https://github.com/AdityaAmitK/strapi-service-navigation',
     tags: ['TypeScript', 'VS Code', 'Strapi'],
     featured: false,
   },
@@ -79,8 +81,7 @@ export const projects: Project[] = [
     summary: 'A focused CLI that finds stale .next build folders across a workspace and lets you reclaim the space interactively.',
     image: '/images/projects/next-sweep-demo.png',
     imageAlt: 'Next Sweep finding and removing a Next.js build folder',
-    href: 'https://www.npmjs.com/package/next-sweep',
-    linkLabel: 'view on npm',
+    liveHref: 'https://www.npmjs.com/package/next-sweep',
     tags: ['Node.js', 'CLI', 'Next.js'],
     featured: false,
   },
@@ -91,8 +92,7 @@ export const projects: Project[] = [
     summary: 'An AI-assisted platform for navigating Mumbai’s Development Control and Promotion Regulations, pairing source documents with cited answers and research workflows. I helped build it at Axion AI Labs from June to July 2024.',
     image: '/images/projects/dcpr-ai.png',
     imageAlt: 'DCPR AI assistant answering a planning regulation question beside its source document',
-    href: 'https://app.dcprai.com/',
-    linkLabel: 'visit DCPR AI',
+    liveHref: 'https://app.dcprai.com/',
     tags: ['AI assistant', 'Document search', 'Product engineering'],
     featured: false,
   },
@@ -103,8 +103,7 @@ export const projects: Project[] = [
     summary: 'Research into a client–server verification flow where facial encodings are encrypted before leaving the device, then decrypted and compared server-side.',
     image: '/images/projects/secure-face-recognition-research.png',
     imageAlt: 'Architecture diagram for encrypted face-recognition verification',
-    href: 'https://ieeexplore.ieee.org/ielx8/6287639/10820123/11179966.pdf?tp=&arnumber=11179966&isnumber=10820123',
-    linkLabel: 'read the publication',
+    liveHref: 'https://ieeexplore.ieee.org/ielx8/6287639/10820123/11179966.pdf?tp=&arnumber=11179966&isnumber=10820123',
     tags: ['Python', 'Computer vision', 'Encryption'],
     featured: false,
   },

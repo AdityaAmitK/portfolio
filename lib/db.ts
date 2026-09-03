@@ -2,7 +2,7 @@ import 'server-only'
 import Database from 'better-sqlite3'
 import fs from 'node:fs'
 import path from 'node:path'
-import { about, projects, skills, tools, type ManagedContent } from './content'
+import { about, projects, skills, tools, type ManagedContent, type Project } from './content'
 
 export type Tag = { id: number; name: string; slug: string }
 export type Post = {
@@ -165,8 +165,8 @@ if (contentVersion < 2) {
     .filter(project => project.slug !== 'cricket-player-cluster')
     .map(project => {
       if (project.slug === 'algodesk') return { ...project, summary: projects.find(item => item.slug === 'algodesk')!.summary }
-      if (project.slug === 'rupee-ledger') return { ...project, href: undefined, linkLabel: undefined }
-      if (project.slug === 'secure-face-recognition') return { ...project, href: projects.find(item => item.slug === 'secure-face-recognition')!.href, linkLabel: 'read the publication' }
+      if (project.slug === 'rupee-ledger') return { ...project, repoHref: undefined, demoHref: undefined, liveHref: undefined }
+      if (project.slug === 'secure-face-recognition') return { ...project, liveHref: projects.find(item => item.slug === 'secure-face-recognition')!.liveHref }
       return project
     })
   parsedContent.tools = tools
@@ -189,6 +189,24 @@ if (contentVersion < 4) {
   parsedContent.about = about
   db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
   db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '4') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
+}
+
+if (contentVersion < 5) {
+  const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+  const parsedContent = JSON.parse(storedContent.value) as ManagedContent
+  const canonicalProjects = new Map(projects.map(project => [project.slug, project]))
+  parsedContent.projects = parsedContent.projects.map(project => {
+    const legacy = project as Project & { href?: string; linkLabel?: string }
+    const canonical = canonicalProjects.get(project.slug)
+    const repoHref = canonical?.repoHref || (legacy.linkLabel?.includes('source') ? legacy.href : undefined)
+    const liveHref = canonical?.liveHref || (legacy.href && !repoHref ? legacy.href : undefined)
+    const { href: _href, linkLabel: _linkLabel, ...cleanProject } = legacy
+    void _href
+    void _linkLabel
+    return { ...cleanProject, repoHref, demoHref: canonical?.demoHref, liveHref }
+  })
+  db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '5') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
 
 function tagsForPost(postId: number) {
