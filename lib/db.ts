@@ -298,7 +298,7 @@ export function getPublishedPosts(filters: { query?: string; tag?: string } = {}
 }
 
 export function getAllPosts() {
-  return hydratePosts(db.prepare('SELECT * FROM posts ORDER BY updated_at DESC').all() as PostRow[])
+  return hydratePosts(db.prepare('SELECT * FROM posts ORDER BY created_at DESC').all() as PostRow[])
 }
 
 export function getPostBySlug(slug: string, includeDrafts = false) {
