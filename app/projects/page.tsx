@@ -12,7 +12,6 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
   const type = typeof params.type === 'string' && ['experience', 'projects', 'research'].includes(params.type) ? params.type as 'experience' | 'projects' | 'research' : 'all'
   return (
     <main id="main" className="shell">
-      <header className="page-intro"><h1>Work</h1></header>
       <WorkBrowser projects={projects} experiences={experiences} initialQuery={typeof params.q === 'string' ? params.q : ''} initialTag={typeof params.tag === 'string' ? params.tag : ''} initialType={type} />
     </main>
   )

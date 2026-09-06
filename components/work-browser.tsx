@@ -24,7 +24,14 @@ export function WorkBrowser({ projects, experiences, initialQuery = '', initialT
   const [tag, setTag] = useState(initialTag)
   const [type, setType] = useState<WorkType>(initialType)
   const normalizedQuery = query.trim().toLowerCase()
-  const tags = useMemo(() => [...new Set([...projects.flatMap(project => project.tags), ...experiences.flatMap(experience => experience.engagements.flatMap(engagement => engagement.tags))])].sort((a, b) => a.localeCompare(b)), [projects, experiences])
+  const tags = useMemo(() => {
+    const values = [...projects.flatMap(project => project.tags), ...experiences.flatMap(experience => experience.engagements.flatMap(engagement => engagement.tags))]
+    const counts = new Map<string, number>()
+    values.forEach(value => counts.set(value, (counts.get(value) || 0) + 1))
+    return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([value]) => value)
+  }, [projects, experiences])
+  const primaryTags = tags.slice(0, 15)
+  const secondaryTags = tags.slice(15)
 
   const matchesProject = (project: Project) => (!tag || project.tags.includes(tag)) && (!normalizedQuery || [project.title, project.summary, ...project.tags].join(' ').toLowerCase().includes(normalizedQuery))
   const visibleProjects = [...projects].filter(project => type !== 'experience' && type !== 'research' && !isResearch(project) && matchesProject(project)).sort((a, b) => projectSortDate(b).localeCompare(projectSortDate(a)))
@@ -40,10 +47,12 @@ export function WorkBrowser({ projects, experiences, initialQuery = '', initialT
   }, [query, tag, type])
 
   return <>
+    <header className="page-intro"><h1>{tag ? `${tag} work` : 'Work'}</h1></header>
     <section className="work-tools" aria-label="Search and filter work">
       <label className="work-search"><span className="sr-only">Search work</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search projects, experience, or technologies" /></label>
       <div className="work-tabs" aria-label="Filter work type">{([['all', 'All'], ['experience', 'Experience'], ['projects', 'Projects'], ['research', 'Research']] as const).map(([value, label]) => <button type="button" aria-pressed={type === value} onClick={() => setType(value)} key={value}>{label}</button>)}</div>
-      {tags.length > 0 && <div className="work-tags" aria-label="Filter work by tag">{tags.map(value => <button type="button" className="tag" aria-pressed={tag === value} onClick={() => setTag(tag === value ? '' : value)} key={value}>{value}</button>)}</div>}
+      {primaryTags.length > 0 && <div className="work-tags" aria-label="Filter work by tag">{primaryTags.map(value => <button type="button" className="tag" aria-pressed={tag === value} onClick={() => setTag(tag === value ? '' : value)} key={value}>{value}</button>)}</div>}
+      {secondaryTags.length > 0 && <details className="work-more-tags" open={secondaryTags.includes(tag) || undefined}><summary>More filters</summary><div className="work-tags">{secondaryTags.map(value => <button type="button" className="tag" aria-pressed={tag === value} onClick={() => setTag(tag === value ? '' : value)} key={value}>{value}</button>)}</div></details>}
     </section>
 
     <div className="work-results" aria-live="polite">

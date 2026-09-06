@@ -204,6 +204,8 @@ img { display: block; max-width: 100%; }
 .work-search input { width: 100%; border: 0; background: transparent; color: var(--ink); padding: 14px 16px; font: inherit; }
 .work-search input:focus-visible { outline: 0; }
 .work-tabs, .work-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.work-more-tags summary { width: fit-content; cursor: pointer; color: var(--muted); font: 500 10px/1.4 var(--font-utility); letter-spacing: .07em; text-transform: uppercase; }
+.work-more-tags .work-tags { margin-top: 12px; }
 .work-tabs button { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 8px 13px; cursor: pointer; font: 400 10px/1.4 var(--font-utility); letter-spacing: .07em; text-transform: uppercase; }
 .work-tabs button[aria-pressed='true'], .work-tags .tag[aria-pressed='true'] { border-color: var(--signal); background: var(--signal); color: var(--paper); }
 button.tag { background: transparent; cursor: pointer; }
