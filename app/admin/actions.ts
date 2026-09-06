@@ -76,6 +76,11 @@ export async function updateContent(formData: FormData) {
   const raw = String(formData.get('content') || '')
   const content = JSON.parse(raw) as ManagedContent
   if (!Array.isArray(content.projects) || !Array.isArray(content.tools) || !Array.isArray(content.skills) || !content.about || typeof content.about.headline !== 'string' || typeof content.about.body !== 'string') throw new Error('Invalid content')
+  content.projects = content.projects.map(project => ({
+    ...project,
+    slug: slugify(project.slug || project.title),
+    year: /^\d{4}-\d{2}-\d{2}$/.test(project.date || '') ? Number(project.date!.slice(0, 4)) : project.year,
+  }))
   saveManagedContent(content)
   revalidatePath('/')
   revalidatePath('/projects')

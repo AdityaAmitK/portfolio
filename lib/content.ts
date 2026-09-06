@@ -2,6 +2,7 @@ export type Project = {
   slug: string
   title: string
   year: number
+  date?: string
   summary: string
   image?: string
   imageAlt?: string

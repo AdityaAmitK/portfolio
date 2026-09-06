@@ -18,6 +18,10 @@ function imageAltFromFilename(filename: string) {
   return filename.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim()
 }
 
+function slugify(value: string) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 export function ContentEditor({ initial }: { initial: ManagedContent }) {
   const [content, setContent] = useState(initial)
   const [uploadStatus, setUploadStatus] = useState('')
@@ -77,15 +81,15 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
         <div className="content-stack">
           {content.projects.map((project, index) => (
             <details className="admin-card" key={index}>
-              <summary><strong>{project.title || 'Untitled project'}</strong><span className="mono muted">{project.year}</span></summary>
+              <summary><strong>{project.title || 'Untitled project'}</strong><span className="mono muted">{project.date || project.year}</span></summary>
               <div className="admin-form content-fields">
                 <div className="form-row">
-                  <div className="field"><label>Title</label><input value={project.title} onChange={event => updateProject(index, { title: event.target.value })} /></div>
-                  <div className="field"><label>Slug</label><input value={project.slug} onChange={event => updateProject(index, { slug: event.target.value })} /></div>
+                  <div className="field"><label>Title</label><input value={project.title} onChange={event => updateProject(index, { title: event.target.value, ...((!project.slug || project.slug === slugify(project.title)) && { slug: slugify(event.target.value) }) })} /></div>
+                  <div className="field"><label>Slug</label><input value={project.slug} placeholder="generated-from-title" onChange={event => updateProject(index, { slug: event.target.value })} /></div>
                 </div>
                 <div className="field"><label>Summary</label><textarea className="short-textarea" value={project.summary} onChange={event => updateProject(index, { summary: event.target.value })} /></div>
                 <div className="form-row">
-                  <div className="field"><label>Year</label><input type="number" value={project.year} onChange={event => updateProject(index, { year: Number(event.target.value) })} /></div>
+                  <div className="field"><label>Date</label><input type="date" value={project.date || ''} onChange={event => updateProject(index, { date: event.target.value || undefined, year: Number(event.target.value.slice(0, 4)) || project.year })} /></div>
                   <div className="field"><label>Tags (comma separated)</label><input value={project.tags.join(', ')} onChange={event => updateProject(index, { tags: event.target.value.split(',').map(tag => tag.trim()).filter(Boolean) })} /></div>
                 </div>
                 <section className="cover-editor project-image-editor" aria-labelledby={`project-image-label-${index}`} onPaste={event => pasteProjectImage(index, event)} tabIndex={0}>
@@ -110,7 +114,7 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
           ))}
         </div>
         {uploadStatus && <p className="upload-status" role="status">{uploadStatus}</p>}
-        <button type="button" className="admin-button admin-button--secondary add-button" onClick={() => setContent(value => ({ ...value, projects: [...value.projects, { slug: 'new-project', title: 'New project', year: new Date().getFullYear(), summary: '', tags: [], featured: false }] }))}>Add project</button>
+        <button type="button" className="admin-button admin-button--secondary add-button" onClick={() => { const date = new Date().toLocaleDateString('en-CA'); setContent(value => ({ ...value, projects: [...value.projects, { slug: '', title: '', date, year: Number(date.slice(0, 4)), summary: '', tags: [], featured: false }] })) }}>Add project</button>
       </section>
 
       <section>
