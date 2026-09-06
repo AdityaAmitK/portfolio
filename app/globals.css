@@ -208,8 +208,8 @@ img { display: block; max-width: 100%; }
 .work-tabs button[aria-pressed='true'], .work-tags .tag[aria-pressed='true'] { border-color: var(--signal); background: var(--signal); color: var(--paper); }
 button.tag { background: transparent; cursor: pointer; }
 .work-results { display: grid; gap: 100px; padding-bottom: 120px; }
-.work-group > header { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--ink); }
-.work-group > header .eyebrow { margin: 0; }
+.work-group > header { display: flex; align-items: end; justify-content: flex-start; gap: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--ink); }
+.work-group > header .eyebrow { display: none; }
 .work-group > header h2 { margin: 0; font: 600 32px/1.1 var(--font-display); }
 .work-list { display: grid; }
 .work-entry { padding: 38px 0 48px; border-bottom: 1px solid var(--line); }
