@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useState, type ChangeEvent, type ClipboardEvent } from 'react'
 import { updateContent } from '@/app/admin/actions'
-import type { ManagedContent, Project, Tool } from '@/lib/content'
+import type { Engagement, Experience, ManagedContent, Project, Tool } from '@/lib/content'
 
 async function uploadImage(file: File) {
   const data = new FormData()
@@ -31,6 +31,12 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
       ...value,
       projects: value.projects.map((project, i) => i === index ? { ...project, ...patch } : project),
     }))
+
+  const updateExperience = (index: number, patch: Partial<Experience>) =>
+    setContent(value => ({ ...value, experiences: value.experiences.map((experience, i) => i === index ? { ...experience, ...patch } : experience) }))
+
+  const updateEngagement = (experienceIndex: number, engagementIndex: number, patch: Partial<Engagement>) =>
+    updateExperience(experienceIndex, { engagements: content.experiences[experienceIndex].engagements.map((engagement, i) => i === engagementIndex ? { ...engagement, ...patch } : engagement) })
 
   const updateTool = (index: number, patch: Partial<Tool>) =>
     setContent(value => ({
@@ -74,6 +80,50 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
           <div className="field"><label>Headline</label><input value={content.about.headline} onChange={event => setContent(value => ({ ...value, about: { ...value.about, headline: event.target.value } }))} /></div>
           <div className="field"><label>Body (Markdown)</label><textarea className="about-textarea" value={content.about.body} onChange={event => setContent(value => ({ ...value, about: { ...value.about, body: event.target.value } }))} /></div>
         </div>
+      </section>
+
+      <section>
+        <div className="section-head"><h2>Experience</h2></div>
+        <div className="content-stack">
+          {content.experiences.map((experience, experienceIndex) => (
+            <details className="admin-card" key={experienceIndex}>
+              <summary><strong>{experience.company || 'New company'}</strong><span className="mono muted">{experience.startDate}–{experience.endDate || 'present'}</span></summary>
+              <div className="admin-form content-fields">
+                <div className="form-row">
+                  <div className="field"><label>Company</label><input value={experience.company} onChange={event => updateExperience(experienceIndex, { company: event.target.value })} /></div>
+                  <div className="field"><label>Role</label><input value={experience.role} onChange={event => updateExperience(experienceIndex, { role: event.target.value })} /></div>
+                </div>
+                <div className="field"><label>Company link (optional)</label><input type="url" value={experience.companyHref || ''} placeholder="https://" onChange={event => updateExperience(experienceIndex, { companyHref: event.target.value || undefined })} /></div>
+                <div className="form-row">
+                  <div className="field"><label>Started</label><input type="month" value={experience.startDate} onChange={event => updateExperience(experienceIndex, { startDate: event.target.value })} /></div>
+                  <div className="field"><label>Ended (leave blank if current)</label><input type="month" value={experience.endDate || ''} onChange={event => updateExperience(experienceIndex, { endDate: event.target.value || undefined })} /></div>
+                </div>
+                <div className="engagement-editor">
+                  <p className="eyebrow">Client projects</p>
+                  {experience.engagements.map((engagement, engagementIndex) => (
+                    <div className="admin-form engagement-editor__item" key={engagementIndex}>
+                      <div className="form-row">
+                        <div className="field"><label>Project</label><input value={engagement.name} onChange={event => updateEngagement(experienceIndex, engagementIndex, { name: event.target.value })} /></div>
+                        <div className="field"><label>Project link (optional)</label><input type="url" value={engagement.href || ''} placeholder="https://" onChange={event => updateEngagement(experienceIndex, engagementIndex, { href: event.target.value || undefined })} /></div>
+                      </div>
+                      <div className="form-row">
+                        <div className="field"><label>Started</label><input type="month" value={engagement.startDate} onChange={event => updateEngagement(experienceIndex, engagementIndex, { startDate: event.target.value })} /></div>
+                        <div className="field"><label>Ended (leave blank if current)</label><input type="month" value={engagement.endDate || ''} onChange={event => updateEngagement(experienceIndex, engagementIndex, { endDate: event.target.value || undefined })} /></div>
+                      </div>
+                      <div className="field"><label>Summary</label><textarea className="short-textarea" value={engagement.summary} onChange={event => updateEngagement(experienceIndex, engagementIndex, { summary: event.target.value })} /></div>
+                      <div className="field"><label>Highlights (one per line)</label><textarea className="short-textarea" value={engagement.highlights.join('\n')} onChange={event => updateEngagement(experienceIndex, engagementIndex, { highlights: event.target.value.split('\n').map(item => item.trim()).filter(Boolean) })} /></div>
+                      <div className="field"><label>Tags (comma separated)</label><input value={engagement.tags.join(', ')} onChange={event => updateEngagement(experienceIndex, engagementIndex, { tags: event.target.value.split(',').map(tag => tag.trim()).filter(Boolean) })} /></div>
+                      <button type="button" className="admin-button admin-button--danger" onClick={() => updateExperience(experienceIndex, { engagements: experience.engagements.filter((_, i) => i !== engagementIndex) })}>Remove client project</button>
+                    </div>
+                  ))}
+                  <button type="button" className="admin-button admin-button--secondary add-button" onClick={() => updateExperience(experienceIndex, { engagements: [...experience.engagements, { name: '', startDate: '', summary: '', highlights: [], tags: [] }] })}>Add client project</button>
+                </div>
+                <button type="button" className="admin-button admin-button--danger" onClick={() => setContent(value => ({ ...value, experiences: value.experiences.filter((_, i) => i !== experienceIndex) }))}>Remove experience</button>
+              </div>
+            </details>
+          ))}
+        </div>
+        <button type="button" className="admin-button admin-button--secondary add-button" onClick={() => setContent(value => ({ ...value, experiences: [...value.experiences, { company: '', role: '', startDate: '', engagements: [] }] }))}>Add experience</button>
       </section>
 
       <section>

@@ -149,6 +149,20 @@ img { display: block; max-width: 100%; }
 .section-link { font: 400 11px/1.4 var(--font-utility); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .section-link:hover { color: var(--signal); }
 
+.experience-list { border-top: 1px solid var(--ink); }
+.experience { display: grid; grid-template-columns: minmax(200px, .65fr) minmax(0, 1.35fr); gap: 54px; padding: 38px 0 46px; border-bottom: 1px solid var(--line); }
+.experience__employer h3 { margin: 0 0 6px; font: 600 25px/1.15 var(--font-display); }
+.experience__employer h3 a:hover, .engagement h4 a:hover { color: var(--signal); }
+.experience__employer > p:last-child { margin: 0; color: var(--muted); font-size: 13px; }
+.experience__engagements { display: grid; gap: 38px; }
+.engagement + .engagement { padding-top: 38px; border-top: 1px solid var(--line); }
+.engagement__heading { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
+.engagement h4 { margin: 0; font: 600 29px/1.15 var(--font-display); }
+.engagement__heading span { color: var(--muted); font: 400 10px/1.4 var(--font-utility); white-space: nowrap; text-transform: uppercase; }
+.engagement > p { margin: 15px 0 0; color: var(--muted); }
+.engagement ul { margin: 20px 0 0; padding-left: 20px; }
+.engagement li { padding-left: 5px; margin-top: 9px; font-size: 14px; }
+
 .project-teasers { display: grid; gap: 56px; }
 .project-teaser { display: grid; grid-template-columns: 1.3fr .7fr; gap: 40px; align-items: center; }
 .project-teaser:nth-child(even) { grid-template-columns: .7fr 1.3fr; }
@@ -368,6 +382,9 @@ img { display: block; max-width: 100%; }
 .content-stack { display: grid; gap: 12px; }
 .content-stack details summary { display: flex; justify-content: space-between; cursor: pointer; }
 .content-fields { margin-top: 24px; }
+.engagement-editor { display: grid; gap: 14px; padding: 20px; border: 1px solid var(--line); background: var(--paper); }
+.engagement-editor__item { padding: 20px; border: 1px solid var(--line); background: var(--paper-deep); }
+.engagement-editor__item + .engagement-editor__item { margin-top: 4px; }
 .field textarea.short-textarea { min-height: 110px; font-family: var(--font-body); }
 .field textarea.about-textarea { min-height: 360px; font-family: var(--font-body); }
 .add-button { margin-top: 14px; }
@@ -407,6 +424,10 @@ img { display: block; max-width: 100%; }
   .section-head { margin-bottom: 25px; padding-bottom: 11px; }
   .section-head h2 { font-size: 27px; }
   .section-link { font-size: 9px; }
+  .experience { grid-template-columns: 1fr; gap: 26px; padding: 30px 0 38px; }
+  .experience__employer h3 { font-size: 23px; }
+  .engagement h4 { font-size: 25px; }
+  .engagement__heading { display: grid; gap: 8px; }
   .project-teasers { gap: 48px; }
   .project-teaser { grid-template-columns: 1fr; gap: 18px; }
   .project-teaser:nth-child(even) { grid-template-columns: 1fr; }

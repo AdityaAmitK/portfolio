@@ -17,7 +17,9 @@ export type Project = {
 
 export type Tool = { name: string; category: string; note: string; href?: string }
 export type AboutContent = { headline: string; body: string }
-export type ManagedContent = { projects: Project[]; tools: Tool[]; skills: string[]; about: AboutContent }
+export type Engagement = { name: string; href?: string; startDate: string; endDate?: string; summary: string; highlights: string[]; tags: string[] }
+export type Experience = { company: string; companyHref?: string; role: string; startDate: string; endDate?: string; engagements: Engagement[] }
+export type ManagedContent = { projects: Project[]; experiences: Experience[]; tools: Tool[]; skills: string[]; about: AboutContent }
 
 export const projects: Project[] = [
   {
@@ -102,17 +104,6 @@ export const projects: Project[] = [
     featured: false,
   },
   {
-    slug: 'dcpr-ai',
-    title: 'DCPR AI',
-    year: 2024,
-    summary: 'An AI-assisted platform for navigating Mumbai’s Development Control and Promotion Regulations, pairing source documents with cited answers and research workflows. I helped build it at Axion AI Labs from June to July 2024.',
-    image: '/images/projects/dcpr-ai.png',
-    imageAlt: 'DCPR AI assistant answering a planning regulation question beside its source document',
-    liveHref: 'https://app.dcprai.com/',
-    tags: ['AI assistant', 'Document search', 'Product engineering'],
-    featured: false,
-  },
-  {
     slug: 'secure-face-recognition',
     title: 'Secure Face Recognition Research',
     year: 2024,
@@ -122,6 +113,42 @@ export const projects: Project[] = [
     liveHref: 'https://ieeexplore.ieee.org/ielx8/6287639/10820123/11179966.pdf?tp=&arnumber=11179966&isnumber=10820123',
     tags: ['Python', 'Computer vision', 'Encryption'],
     featured: false,
+  },
+]
+
+export const experiences: Experience[] = [
+  {
+    company: 'Fischer Jordan',
+    companyHref: 'https://fischerjordan.com',
+    role: 'Software Engineer',
+    startDate: '2025-02',
+    engagements: [{
+      name: 'Reco Social',
+      href: 'https://recosocial.com',
+      startDate: '2025-02',
+      summary: 'Backend and platform engineering for a consumer social app built around recommendations, creators, and conversations. I joined when the platform had 198 registered users and helped scale its backend through growth to nearly 2 million users.',
+      highlights: [
+        'Built and evolved production systems across content ingestion and processing, personalized feeds, interactions, moderation, customer support, and internal administration.',
+        'Improved performance and reliability through caching, pagination, asynchronous processing, database optimization, migrations, backfills, and production debugging.',
+      ],
+      tags: ['TypeScript', 'Node.js', 'Strapi', 'PostgreSQL', 'Backend systems'],
+    }],
+  },
+  {
+    company: 'Axion AI Labs',
+    companyHref: 'https://www.axionailabs.in/',
+    role: 'Software Engineer',
+    startDate: '2024-06',
+    endDate: '2024-07',
+    engagements: [{
+      name: 'DCPR AI',
+      href: 'https://app.dcprai.com/',
+      startDate: '2024-06',
+      endDate: '2024-07',
+      summary: 'Helped build an AI-assisted platform for navigating Mumbai’s Development Control and Promotion Regulations, pairing source documents with cited answers and research workflows.',
+      highlights: [],
+      tags: ['AI assistant', 'Document search', 'Product engineering'],
+    }],
   },
 ]
 
@@ -135,7 +162,7 @@ export const skills = ['TypeScript', 'React & Next.js', 'Node.js', 'Python', 'St
 
 export const about: AboutContent = {
   headline: 'I like software that earns its place.',
-  body: `I’m Aditya, a software engineer. I currently work at [Fischer Jordan](https://fischerjordan.com), where I build and maintain products across the stack. From June to July 2024, I worked with [Axion AI Labs](https://www.axionailabs.in/) to help build [DCPR AI](https://app.dcprai.com/).
+  body: `I’m Aditya, a software engineer. I currently work at [Fischer Jordan](https://fischerjordan.com), where I build and maintain products across the stack.
 
 Outside work, I build tools for myself: a trading control room, a personal finance desk, a keyboard bridge between iPhone and Mac, and small developer utilities that remove recurring friction. When those utilities become useful beyond my own machine, I publish them.
 
