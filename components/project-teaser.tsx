@@ -11,7 +11,7 @@ export function ProjectTeaser({ project }: { project: Project }) {
       <div>
         <p className="eyebrow">{projectDate} · {project.tags[0]}</p>
         <h3><Link href={projectHref}>{project.title}</Link></h3>
-        <div className="tags">{project.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}</div>
+        <div className="tags">{project.tags.map(tag => <Link className="tag" href={`/projects?tag=${encodeURIComponent(tag)}`} key={tag}>{tag}</Link>)}</div>
       </div>
     </article>
   )

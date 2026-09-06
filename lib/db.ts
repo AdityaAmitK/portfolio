@@ -321,6 +321,20 @@ export function saveTag(id: number | undefined, name: string) {
   else db.prepare('INSERT INTO tags (name, slug) VALUES (?, ?)').run(cleanName, slug)
 }
 
+export function ensureTags(names: string[]) {
+  const ids: number[] = []
+  const insert = db.prepare('INSERT OR IGNORE INTO tags (name, slug) VALUES (?, ?)')
+  const find = db.prepare('SELECT id FROM tags WHERE slug = ?')
+  for (const name of [...new Set(names.map(value => value.trim()).filter(Boolean))]) {
+    const slug = slugify(name)
+    if (!slug) continue
+    insert.run(name, slug)
+    const tag = find.get(slug) as { id: number } | undefined
+    if (tag) ids.push(tag.id)
+  }
+  return ids
+}
+
 export function deleteTag(id: number) {
   db.prepare('DELETE FROM tags WHERE id = ?').run(id)
 }

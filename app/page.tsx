@@ -47,7 +47,7 @@ export default function Home() {
                     <div className="engagement__heading"><h4>{engagement.href ? <a href={engagement.href} target="_blank" rel="noreferrer">{engagement.name}</a> : engagement.name}</h4><span>{monthLabel(engagement.startDate)}–{monthLabel(engagement.endDate)}</span></div>
                     <p>{engagement.summary}</p>
                     {engagement.highlights.length > 0 && <ul>{engagement.highlights.map(highlight => <li key={highlight}>{highlight}</li>)}</ul>}
-                    {engagement.tags.length > 0 && <div className="tags">{engagement.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}</div>}
+                    {engagement.tags.length > 0 && <div className="tags">{engagement.tags.map(tag => <Link className="tag" href={`/projects?tag=${encodeURIComponent(tag)}`} key={tag}>{tag}</Link>)}</div>}
                   </section>
                 ))}
               </div>

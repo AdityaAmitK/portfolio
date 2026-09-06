@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createSession, destroySession, isAuthenticated, passwordsMatch } from '@/lib/auth'
-import { deleteComment as deleteCommentRecord, deletePost, deleteTag as deleteTagRecord, moderateComment as moderateCommentRecord, replyToComment as replyToCommentRecord, saveManagedContent, savePost, saveTag as saveTagRecord } from '@/lib/db'
+import { deleteComment as deleteCommentRecord, deletePost, deleteTag as deleteTagRecord, ensureTags, moderateComment as moderateCommentRecord, replyToComment as replyToCommentRecord, saveManagedContent, savePost, saveTag as saveTagRecord } from '@/lib/db'
 import type { ManagedContent } from '@/lib/content'
 
 export async function login(formData: FormData) {
@@ -33,7 +33,7 @@ export async function upsertPost(formData: FormData) {
     title,
     slug,
     description: String(formData.get('description') || '').trim(),
-    tagIds: formData.getAll('tags').map(Number).filter(tagId => Number.isInteger(tagId) && tagId > 0),
+    tagIds: [...formData.getAll('tags').map(Number).filter(tagId => Number.isInteger(tagId) && tagId > 0), ...ensureTags(String(formData.get('newTags') || '').split(',').map(tag => tag.trim()).filter(Boolean))],
     body: String(formData.get('body') || ''),
     cover_image: String(formData.get('coverImage') || '').trim(),
     cover_alt: String(formData.get('coverAlt') || '').trim(),
@@ -80,7 +80,9 @@ export async function updateContent(formData: FormData) {
     ...project,
     slug: slugify(project.slug || project.title),
     year: /^\d{4}-\d{2}-\d{2}$/.test(project.date || '') ? Number(project.date!.slice(0, 4)) : project.year,
+    tags: project.tags.map(tag => tag.trim()).filter(Boolean),
   }))
+  content.experiences = content.experiences.map(experience => ({ ...experience, engagements: experience.engagements.map(engagement => ({ ...engagement, highlights: engagement.highlights.map(highlight => highlight.trim()).filter(Boolean), tags: engagement.tags.map(tag => tag.trim()).filter(Boolean) })) }))
   saveManagedContent(content)
   revalidatePath('/')
   revalidatePath('/projects')

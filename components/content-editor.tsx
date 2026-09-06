@@ -147,8 +147,8 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
                         <div className="field"><label>Ended (leave blank if current)</label><input type="month" value={engagement.endDate || ''} onChange={event => updateEngagement(experienceIndex, engagementIndex, { endDate: event.target.value || undefined })} /></div>
                       </div>
                       <div className="field"><label>Summary</label><textarea className="short-textarea" value={engagement.summary} onChange={event => updateEngagement(experienceIndex, engagementIndex, { summary: event.target.value })} /></div>
-                      <div className="field"><label>Highlights (one per line)</label><textarea className="short-textarea" value={engagement.highlights.join('\n')} onChange={event => updateEngagement(experienceIndex, engagementIndex, { highlights: event.target.value.split('\n').map(item => item.trim()).filter(Boolean) })} /></div>
-                      <div className="field"><label>Tags (comma separated)</label><input value={engagement.tags.join(', ')} onChange={event => updateEngagement(experienceIndex, engagementIndex, { tags: event.target.value.split(',').map(tag => tag.trim()).filter(Boolean) })} /></div>
+                      <div className="field"><label>Highlights (one per line)</label><textarea className="short-textarea" value={engagement.highlights.join('\n')} onChange={event => updateEngagement(experienceIndex, engagementIndex, { highlights: event.target.value.split('\n').map(item => item.trim()) })} /></div>
+                      <div className="field"><label>Tags (comma separated)</label><input value={engagement.tags.join(', ')} onChange={event => updateEngagement(experienceIndex, engagementIndex, { tags: event.target.value.split(',').map(tag => tag.trim()) })} /></div>
                       <button type="button" className="admin-button admin-button--danger" onClick={() => updateExperience(experienceIndex, { engagements: experience.engagements.filter((_, i) => i !== engagementIndex) })}>Remove client project</button>
                     </div>
                   ))}
@@ -185,7 +185,7 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
                 <div className="field"><label>Summary</label><textarea className="short-textarea" value={project.summary} onChange={event => updateProject(index, { summary: event.target.value })} /></div>
                 <div className="form-row">
                   <div className="field"><label>Date</label><input type="date" value={project.date || ''} onChange={event => updateProject(index, { date: event.target.value || undefined, year: Number(event.target.value.slice(0, 4)) || project.year })} /></div>
-                  <div className="field"><label>Tags (comma separated)</label><input value={project.tags.join(', ')} onChange={event => updateProject(index, { tags: event.target.value.split(',').map(tag => tag.trim()).filter(Boolean) })} /></div>
+                  <div className="field"><label>Tags (comma separated)</label><input value={project.tags.join(', ')} onChange={event => updateProject(index, { tags: event.target.value.split(',').map(tag => tag.trim()) })} /></div>
                 </div>
                 <section className="cover-editor project-image-editor" aria-labelledby={`project-image-label-${index}`} onPaste={event => pasteProjectImage(index, event)} tabIndex={0}>
                   <div className="field"><label id={`project-image-label-${index}`} htmlFor={`project-image-upload-${index}`}>Project image</label><input id={`project-image-upload-${index}`} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={event => addProjectImage(index, event)} /><small>Upload or paste an image here.</small></div>
