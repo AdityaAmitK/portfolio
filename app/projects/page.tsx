@@ -9,10 +9,10 @@ export const metadata: Metadata = { title: 'Work', description: 'Professional ex
 export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ q?: string | string[]; tag?: string | string[]; type?: string | string[] }> }) {
   const { projects, experiences } = getManagedContent()
   const params = await searchParams
-  const type = typeof params.type === 'string' && ['experience', 'projects'].includes(params.type) ? params.type as 'experience' | 'projects' : 'all'
+  const type = typeof params.type === 'string' && ['experience', 'projects', 'research'].includes(params.type) ? params.type as 'experience' | 'projects' | 'research' : 'all'
   return (
     <main id="main" className="shell">
-      <header className="page-intro"><p className="eyebrow">Professional and personal · 2024–now</p><h1>Work</h1><p>Client work, products, developer tools, and research in one place.</p></header>
+      <header className="page-intro"><h1>Work</h1></header>
       <WorkBrowser projects={projects} experiences={experiences} initialQuery={typeof params.q === 'string' ? params.q : ''} initialTag={typeof params.tag === 'string' ? params.tag : ''} initialType={type} />
     </main>
   )
