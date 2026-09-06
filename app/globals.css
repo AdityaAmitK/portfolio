@@ -136,6 +136,8 @@ img { display: block; max-width: 100%; }
 .hero-side { display: grid; gap: 38px; }
 .profile-frame { width: min(100%, 286px); margin: 0 auto; padding: 9px 9px 26px; background: #eeece5; box-shadow: 0 16px 38px rgba(19, 18, 14, .14); transform: rotate(1.2deg); }
 .profile-frame img { width: 100%; height: auto; filter: saturate(.88) contrast(.98); }
+.profile-image-preview { max-width: 240px; }
+.profile-image-preview img { width: 100%; height: auto; }
 
 .workbench { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
 .workbench__row { padding: 16px 0; display: grid; grid-template-columns: 100px 1fr; gap: 20px; }

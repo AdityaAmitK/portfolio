@@ -5,9 +5,10 @@ import { useState, type ChangeEvent, type ClipboardEvent } from 'react'
 import { updateContent } from '@/app/admin/actions'
 import type { Engagement, Experience, ManagedContent, Project, Tool } from '@/lib/content'
 
-async function uploadImage(file: File) {
+async function uploadImage(file: File, profile = false) {
   const data = new FormData()
   data.set('file', file)
+  if (profile) data.set('profile', '1')
   const response = await fetch('/api/admin/uploads', { method: 'POST', body: data })
   const result = await response.json() as { url?: string; error?: string }
   if (!response.ok || !result.url) throw new Error(result.error || 'Upload failed.')
@@ -25,6 +26,17 @@ function slugify(value: string) {
 export function ContentEditor({ initial }: { initial: ManagedContent }) {
   const [content, setContent] = useState(initial)
   const [uploadStatus, setUploadStatus] = useState('')
+
+  async function uploadProfileImage(file: File) {
+    try {
+      setUploadStatus('Uploading profile image…')
+      const profileImage = await uploadImage(file, true)
+      setContent(value => ({ ...value, profileImage }))
+      setUploadStatus('Profile image uploaded. Save site content to publish it.')
+    } catch (error) {
+      setUploadStatus(error instanceof Error ? error.message : 'Upload failed.')
+    }
+  }
 
   const updateProject = (index: number, patch: Partial<Project>) =>
     setContent(value => ({
@@ -90,6 +102,8 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
       <section>
         <div className="section-head"><h2>About</h2></div>
         <div className="admin-card admin-form">
+          <div className="field"><label htmlFor="profile-image-upload">Profile image</label><input id="profile-image-upload" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => { const file = event.target.files?.[0]; if (file) void uploadProfileImage(file); event.target.value = '' }} /><small>Upload a portrait, preview it, then save site content to publish.</small></div>
+          <div className="cover-editor__preview profile-image-preview"><Image src={content.profileImage || '/images/profile/aditya-kinjawadekar.png'} alt="Profile image preview" width={900} height={1200} unoptimized />{content.profileImage && <button type="button" className="admin-button admin-button--secondary" onClick={() => setContent(value => ({ ...value, profileImage: undefined }))}>Use default image</button>}</div>
           <div className="field"><label>Headline</label><input value={content.about.headline} onChange={event => setContent(value => ({ ...value, about: { ...value.about, headline: event.target.value } }))} /></div>
           <div className="field"><label>Body (Markdown)</label><textarea className="about-textarea" value={content.about.body} onChange={event => setContent(value => ({ ...value, about: { ...value.about, body: event.target.value } }))} /></div>
         </div>

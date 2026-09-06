@@ -19,7 +19,7 @@ export type Tool = { name: string; category: string; note: string; href?: string
 export type AboutContent = { headline: string; body: string }
 export type Engagement = { name: string; href?: string; startDate: string; endDate?: string; summary: string; highlights: string[]; tags: string[] }
 export type Experience = { company: string; companyHref?: string; role: string; startDate: string; endDate?: string; engagements: Engagement[] }
-export type ManagedContent = { projects: Project[]; experiences: Experience[]; tools: Tool[]; skills: string[]; about: AboutContent }
+export type ManagedContent = { profileImage?: string; projects: Project[]; experiences: Experience[]; tools: Tool[]; skills: string[]; about: AboutContent }
 
 export const projects: Project[] = [
   {

@@ -26,6 +26,11 @@ export async function POST(request: Request) {
 
   const filename = `${Date.now()}-${randomUUID()}.${extension}`
   const bytes = new Uint8Array(await file.arrayBuffer())
+  if (formData.get('profile') === '1') {
+    const profileFilename = `${path.parse(filename).name}-profile.webp`
+    await sharp(bytes).rotate().resize(900, 1200, { fit: 'cover', position: 'attention' }).webp({ quality: 86 }).toFile(path.join(uploadDirectory, profileFilename))
+    return Response.json({ url: `/uploads/${profileFilename}` })
+  }
   await writeFile(path.join(uploadDirectory, filename), bytes)
   if (formData.get('social') === '1') {
     const socialFilename = `${path.parse(filename).name}-social.jpg`
