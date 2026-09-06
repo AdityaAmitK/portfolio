@@ -237,6 +237,14 @@ img { display: block; max-width: 100%; }
 .tool-row p { margin: 0; color: var(--muted); font-size: 14px; }
 .skill-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
 .skill { padding: 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 14px; }
+.contact-section { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 70px; align-items: start; }
+.contact-section h2 { max-width: 430px; margin: 0; font: 600 clamp(36px, 5vw, 58px)/1 var(--font-display); letter-spacing: -.04em; }
+.contact-section p:not(.eyebrow) { margin: 22px 0 0; color: var(--muted); }
+.contact-links { border-top: 1px solid var(--ink); }
+.contact-links a { display: grid; grid-template-columns: 100px 1fr; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.contact-links a:hover { color: var(--signal); }
+.contact-links span { font: 400 10px/1.6 var(--font-utility); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.contact-links strong { min-width: 0; overflow-wrap: anywhere; font-size: 14px; font-weight: 500; }
 
 .prose { padding: 40px 0 110px; }
 .prose h1, .prose h2, .prose h3 { font-family: var(--font-display); line-height: 1.14; letter-spacing: -.025em; }
@@ -396,6 +404,7 @@ img { display: block; max-width: 100%; }
 .field textarea.short-textarea { min-height: 110px; font-family: var(--font-body); }
 .field textarea.about-textarea { min-height: 360px; font-family: var(--font-body); }
 .add-button { margin-top: 14px; }
+.content-actions { display: flex; flex-wrap: wrap; gap: 9px; }
 .skill-edit { display: flex; border: 1px solid var(--line); background: var(--paper-deep); }
 .skill-edit input { flex: 1; border: 0; background: transparent; color: var(--ink); padding: 12px; }
 .skill-edit button { width: 44px; border: 0; border-left: 1px solid var(--line); background: transparent; cursor: pointer; font-size: 20px; }
@@ -461,6 +470,8 @@ img { display: block; max-width: 100%; }
   .credits { line-height: 1.7; }
   .tool-row { grid-template-columns: 1fr; gap: 7px; }
   .skill-grid { grid-template-columns: 1fr; }
+  .contact-section { grid-template-columns: 1fr; gap: 36px; }
+  .contact-links a { grid-template-columns: 76px 1fr; gap: 12px; }
   .site-footer__inner { flex-direction: column; }
   .credits { text-align: left; }
   .editor-grid, .form-row, .cover-editor, .analytics-cards, .analytics-columns { grid-template-columns: 1fr; }

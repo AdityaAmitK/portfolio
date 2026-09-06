@@ -2,7 +2,7 @@ import 'server-only'
 import Database from 'better-sqlite3'
 import fs from 'node:fs'
 import path from 'node:path'
-import { about, experiences, projects, skills, tools, type ManagedContent, type Project } from './content'
+import { about, contactLinks, experiences, projects, skills, tools, type ManagedContent, type Project } from './content'
 
 export type Tag = { id: number; name: string; slug: string }
 export type Post = {
@@ -154,7 +154,7 @@ if (tagSchemaVersion < 1) {
   migrateTags()
 }
 
-const initialContent: ManagedContent = { projects, experiences, tools, skills, about }
+const initialContent: ManagedContent = { projects, experiences, tools, skills, about, contactLinks }
 db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)').run('managed-content', JSON.stringify(initialContent))
 
 const contentVersion = Number((db.prepare('SELECT value FROM settings WHERE key = ?').get('content-version') as { value: string } | undefined)?.value || 0)
@@ -237,6 +237,14 @@ if (contentVersion < 8) {
   parsedContent.projects = parsedContent.projects.filter(project => project.slug !== 'dcpr-ai')
   db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
   db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '8') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
+}
+
+if (contentVersion < 9) {
+  const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+  const parsedContent = JSON.parse(storedContent.value) as Partial<ManagedContent>
+  parsedContent.contactLinks = contactLinks
+  db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '9') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
 
 function tagsForPost(postId: number) {

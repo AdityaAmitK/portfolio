@@ -17,9 +17,10 @@ export type Project = {
 
 export type Tool = { name: string; category: string; note: string; href?: string }
 export type AboutContent = { headline: string; body: string }
+export type ContactLink = { label: string; href: string }
 export type Engagement = { name: string; href?: string; startDate: string; endDate?: string; summary: string; highlights: string[]; tags: string[] }
 export type Experience = { company: string; companyHref?: string; role: string; startDate: string; endDate?: string; engagements: Engagement[] }
-export type ManagedContent = { profileImage?: string; projects: Project[]; experiences: Experience[]; tools: Tool[]; skills: string[]; about: AboutContent }
+export type ManagedContent = { profileImage?: string; contactLinks: ContactLink[]; projects: Project[]; experiences: Experience[]; tools: Tool[]; skills: string[]; about: AboutContent }
 
 export const projects: Project[] = [
   {
@@ -159,6 +160,14 @@ export const tools: Tool[] = [
 ]
 
 export const skills = ['TypeScript', 'React & Next.js', 'Node.js', 'Python', 'Strapi', 'PostgreSQL', 'Systems on Linux', 'Product engineering']
+
+export const contactLinks: ContactLink[] = [
+  { label: 'Email', href: 'mailto:k.aditya2004@gmail.com' },
+  { label: 'GitHub', href: 'https://github.com/AdityaAmitK' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/adityaamit' },
+  { label: 'Instagram', href: 'https://www.instagram.com/adityaamitk23/' },
+  { label: 'X', href: 'https://x.com/AdityaK_1729' },
+]
 
 export const about: AboutContent = {
   headline: 'I like software that earns its place.',

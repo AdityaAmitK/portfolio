@@ -13,7 +13,7 @@ function monthLabel(value?: string) {
 
 export default function Home() {
   const posts = getPublishedPosts().slice(0, 3)
-  const { profileImage, experiences, projects, tools } = getManagedContent()
+  const { profileImage, contactLinks, experiences, projects, tools } = getManagedContent()
   return (
     <main id="main">
       <section className="shell hero">
@@ -71,6 +71,11 @@ export default function Home() {
       <section className="shell section">
         <div className="section-head"><h2>Tools I keep around</h2><Link className="section-link" href="/tools">The full workbench →</Link></div>
         <div className="tool-list">{tools.slice(0, 3).map(tool => <div className="tool-row" key={tool.name}><h2>{tool.href ? <a className="tool-link" href={tool.href} target="_blank" rel="noreferrer">{tool.name}</a> : tool.name}</h2><span className="tool-row__category">{tool.category}</span><p>{tool.note}</p></div>)}</div>
+      </section>
+
+      <section className="shell section contact-section">
+        <div><p className="eyebrow">Contact</p><h2>Want to build something useful?</h2><p>Send me a note or find me elsewhere online.</p></div>
+        <div className="contact-links">{contactLinks.filter(link => link.label && link.href).map(link => <a href={link.href} target={link.href.startsWith('mailto:') ? undefined : '_blank'} rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'} key={`${link.label}-${link.href}`}><span>{link.label}</span><strong>{link.href.startsWith('mailto:') ? link.href.slice(7) : link.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</strong></a>)}</div>
       </section>
     </main>
   )

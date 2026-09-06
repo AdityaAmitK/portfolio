@@ -75,7 +75,7 @@ export async function updateContent(formData: FormData) {
   if (!(await isAuthenticated())) redirect('/admin/login')
   const raw = String(formData.get('content') || '')
   const content = JSON.parse(raw) as ManagedContent
-  if (!Array.isArray(content.projects) || !Array.isArray(content.experiences) || !Array.isArray(content.tools) || !Array.isArray(content.skills) || !content.about || typeof content.about.headline !== 'string' || typeof content.about.body !== 'string') throw new Error('Invalid content')
+  if (!Array.isArray(content.projects) || !Array.isArray(content.experiences) || !Array.isArray(content.tools) || !Array.isArray(content.skills) || !Array.isArray(content.contactLinks) || !content.about || typeof content.about.headline !== 'string' || typeof content.about.body !== 'string') throw new Error('Invalid content')
   content.projects = content.projects.map(project => ({
     ...project,
     slug: slugify(project.slug || project.title),

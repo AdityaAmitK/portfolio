@@ -69,6 +69,15 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
       return { ...value, projects }
     })
 
+  const moveContactLink = (index: number, direction: -1 | 1) =>
+    setContent(value => {
+      const target = index + direction
+      if (target < 0 || target >= value.contactLinks.length) return value
+      const contactLinks = [...value.contactLinks]
+      ;[contactLinks[index], contactLinks[target]] = [contactLinks[target], contactLinks[index]]
+      return { ...value, contactLinks }
+    })
+
   async function uploadProjectImage(index: number, file: File) {
     try {
       setUploadStatus(`Uploading image for ${content.projects[index].title || 'project'}…`)
@@ -232,6 +241,22 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
           ))}
         </div>
         <button type="button" className="admin-button admin-button--secondary add-button" onClick={() => setContent(value => ({ ...value, skills: [...value.skills, 'New skill'] }))}>Add skill</button>
+      </section>
+
+      <section>
+        <div className="section-head"><h2>Contact links</h2></div>
+        <div className="content-stack">
+          {content.contactLinks.map((link, index) => (
+            <div className="admin-card admin-form" key={index}>
+              <div className="form-row">
+                <div className="field"><label>Label</label><input value={link.label} placeholder="LinkedIn" onChange={event => setContent(value => ({ ...value, contactLinks: value.contactLinks.map((item, i) => i === index ? { ...item, label: event.target.value } : item) }))} /></div>
+                <div className="field"><label>Link</label><input value={link.href} placeholder="https://… or mailto:…" onChange={event => setContent(value => ({ ...value, contactLinks: value.contactLinks.map((item, i) => i === index ? { ...item, href: event.target.value } : item) }))} /></div>
+              </div>
+              <div className="content-actions"><button type="button" className="admin-button admin-button--secondary" disabled={index === 0} onClick={() => moveContactLink(index, -1)}>Move up</button><button type="button" className="admin-button admin-button--secondary" disabled={index === content.contactLinks.length - 1} onClick={() => moveContactLink(index, 1)}>Move down</button><button type="button" className="admin-button admin-button--danger" onClick={() => setContent(value => ({ ...value, contactLinks: value.contactLinks.filter((_, i) => i !== index) }))}>Remove</button></div>
+            </div>
+          ))}
+        </div>
+        <button type="button" className="admin-button admin-button--secondary add-button" onClick={() => setContent(value => ({ ...value, contactLinks: [...value.contactLinks, { label: '', href: '' }] }))}>Add contact link</button>
       </section>
 
       <div className="sticky-save"><button type="submit" className="admin-button">Save site content</button></div>
