@@ -126,7 +126,7 @@ export const experiences: Experience[] = [
       name: 'Reco Social',
       href: 'https://recosocial.com',
       startDate: '2025-02',
-      summary: 'Backend and platform engineering for a consumer social app built around recommendations, creators, and conversations. I joined when the platform had 198 registered users and helped scale its backend through growth to nearly 2 million users.',
+      summary: 'Backend and platform engineering for a consumer social app built around recommendations, creators, and conversations. I have helped evolve its backend through a period of rapid growth.',
       highlights: [
         'Built and evolved production systems across content ingestion and processing, personalized feeds, interactions, moderation, customer support, and internal administration.',
         'Improved performance and reliability through caching, pagination, asynchronous processing, database optimization, migrations, backfills, and production debugging.',
