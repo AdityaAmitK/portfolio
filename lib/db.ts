@@ -247,6 +247,27 @@ if (contentVersion < 9) {
   db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '9') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
 
+if (contentVersion < 10) {
+  const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
+  const parsedContent = JSON.parse(storedContent.value) as ManagedContent
+  const projectTags: Record<string, string[]> = {
+    'stride-and-scale': ['React', 'Express', 'PostgreSQL', 'Apple Health'],
+    'oracle-desk': ['Client project', 'Business website', 'WhatsApp'],
+    algodesk: ['Python', 'Next.js', 'PostgreSQL', 'Trading'],
+    'iphone-mac-keyboard': ['Swift', 'iOS', 'macOS', 'Local networking'],
+    'git-blocker': ['TypeScript', 'CLI', 'Git'],
+    'strapi-service-navigation': ['TypeScript', 'VS Code', 'Strapi'],
+    'next-sweep': ['Node.js', 'CLI', 'Next.js'],
+    'secure-face-recognition': ['Python', 'Computer vision', 'Cryptography'],
+    'helium-profile-swticher': ['Raycast', 'AppleScript', 'macOS'],
+    'rupee-ledger': ['React', 'Express', 'SQLite', 'Personal finance'],
+  }
+  parsedContent.projects = parsedContent.projects.map(project => ({ ...project, tags: projectTags[project.slug] || project.tags }))
+  parsedContent.experiences = parsedContent.experiences.map(experience => ({ ...experience, engagements: experience.engagements.map(engagement => engagement.name === 'Reco Social' ? { ...engagement, tags: ['TypeScript', 'Node.js', 'Strapi', 'PostgreSQL', 'Redis'] } : engagement) }))
+  db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '10') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
+}
+
 function tagsForPost(postId: number) {
   return db.prepare(`SELECT tags.id, tags.name, tags.slug FROM tags JOIN post_tags ON post_tags.tag_id = tags.id WHERE post_tags.post_id = ? ORDER BY tags.name COLLATE NOCASE`).all(postId) as Tag[]
 }

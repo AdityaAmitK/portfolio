@@ -32,7 +32,7 @@ export const projects: Project[] = [
     imageAlt: 'AlgoDesk trading overview with anonymised sample data',
     repoHref: 'https://github.com/AdityaAmitK/algodesk',
     demoHref: 'https://demos.adityakinjawadekar.com/algotrading/',
-    tags: ['Python', 'Next.js', 'PostgreSQL', 'Trading systems'],
+    tags: ['Python', 'Next.js', 'PostgreSQL', 'Trading'],
     featured: true,
   },
   {
@@ -44,7 +44,7 @@ export const projects: Project[] = [
     imageAlt: 'Rupee Ledger dashboard with anonymised sample data',
     repoHref: 'https://github.com/AdityaAmitK/rupee-ledger-open-source',
     demoHref: 'https://demos.adityakinjawadekar.com/expensetracker/',
-    tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Personal finance'],
+    tags: ['React', 'Express', 'SQLite', 'Personal finance'],
     featured: true,
   },
   {
@@ -54,7 +54,7 @@ export const projects: Project[] = [
     summary: 'A focused steps and weight tracker with progress trends, configurable goals, manual weigh-ins, and optional Apple Health syncing through Shortcuts.',
     repoHref: 'https://github.com/AdityaAmitK/stride-and-scale',
     demoHref: 'https://demos.adityakinjawadekar.com/stride-and-scale/',
-    tags: ['React', 'TypeScript', 'PostgreSQL', 'Apple Health'],
+    tags: ['React', 'Express', 'PostgreSQL', 'Apple Health'],
     featured: true,
   },
   {
@@ -77,7 +77,7 @@ export const projects: Project[] = [
     imageAlt: 'Git Blocker preventing a secret file from being committed',
     liveHref: 'https://www.npmjs.com/package/git-blocker',
     installCommand: 'npm install -g git-blocker',
-    tags: ['Node.js', 'CLI', 'Git'],
+    tags: ['TypeScript', 'CLI', 'Git'],
     featured: false,
   },
   {
@@ -112,7 +112,7 @@ export const projects: Project[] = [
     image: '/images/projects/secure-face-recognition-research.png',
     imageAlt: 'Architecture diagram for encrypted face-recognition verification',
     liveHref: 'https://ieeexplore.ieee.org/ielx8/6287639/10820123/11179966.pdf?tp=&arnumber=11179966&isnumber=10820123',
-    tags: ['Python', 'Computer vision', 'Encryption'],
+    tags: ['Python', 'Computer vision', 'Cryptography'],
     featured: false,
   },
 ]
@@ -132,7 +132,7 @@ export const experiences: Experience[] = [
         'Built and evolved production systems across content ingestion and processing, personalized feeds, interactions, moderation, customer support, and internal administration.',
         'Improved performance and reliability through caching, pagination, asynchronous processing, database optimization, migrations, backfills, and production debugging.',
       ],
-      tags: ['TypeScript', 'Node.js', 'Strapi', 'PostgreSQL', 'Backend systems'],
+      tags: ['TypeScript', 'Node.js', 'Strapi', 'PostgreSQL', 'Redis'],
     }],
   },
   {
