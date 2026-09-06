@@ -380,6 +380,12 @@ img { display: block; max-width: 100%; }
 .login { min-height: 80vh; display: grid; place-items: center; }
 .login .admin-card { width: min(420px, 100%); }
 .content-stack { display: grid; gap: 12px; }
+.project-order { margin-bottom: 22px; border: 1px solid var(--line); background: var(--paper-deep); padding: 20px; }
+.project-order__item { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 11px 0; border-top: 1px solid var(--line); }
+.project-order__item strong { font-size: 13px; }
+.project-order__item > div { display: flex; gap: 7px; }
+.project-order__item button { border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 6px 9px; cursor: pointer; font-size: 11px; }
+.project-order__item button:disabled { opacity: .35; cursor: default; }
 .content-stack details summary { display: flex; justify-content: space-between; cursor: pointer; }
 .content-fields { margin-top: 24px; }
 .engagement-editor { display: grid; gap: 14px; padding: 20px; border: 1px solid var(--line); background: var(--paper); }
@@ -428,6 +434,8 @@ img { display: block; max-width: 100%; }
   .experience__employer h3 { font-size: 23px; }
   .engagement h4 { font-size: 25px; }
   .engagement__heading { display: grid; gap: 8px; }
+  .project-order__item { align-items: start; }
+  .project-order__item > div { display: grid; }
   .project-teasers { gap: 48px; }
   .project-teaser { grid-template-columns: 1fr; gap: 18px; }
   .project-teaser:nth-child(even) { grid-template-columns: 1fr; }

@@ -44,6 +44,19 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
       tools: value.tools.map((tool, i) => i === index ? { ...tool, ...patch } : tool),
     }))
 
+  const moveFeaturedProject = (index: number, direction: -1 | 1) =>
+    setContent(value => {
+      const featured = value.projects.map((project, i) => project.featured ? i : -1).filter(i => i >= 0)
+      const position = featured.indexOf(index)
+      const target = featured[position + direction]
+      if (target === undefined) return value
+      const projects = [...value.projects]
+      const current = projects[index]
+      projects[index] = projects[target]
+      projects[target] = current
+      return { ...value, projects }
+    })
+
   async function uploadProjectImage(index: number, file: File) {
     try {
       setUploadStatus(`Uploading image for ${content.projects[index].title || 'project'}…`)
@@ -128,6 +141,15 @@ export function ContentEditor({ initial }: { initial: ManagedContent }) {
 
       <section>
         <div className="section-head"><h2>Projects</h2></div>
+        <div className="project-order" aria-label="Selected project order">
+          <p className="eyebrow">Selected project order</p>
+          {content.projects.map((project, index) => project.featured && (
+            <div className="project-order__item" key={project.slug || index}>
+              <strong>{project.title || 'Untitled project'}</strong>
+              <div><button type="button" disabled={index === content.projects.findIndex(item => item.featured)} onClick={() => moveFeaturedProject(index, -1)}>Move up</button><button type="button" disabled={index === content.projects.findLastIndex(item => item.featured)} onClick={() => moveFeaturedProject(index, 1)}>Move down</button></div>
+            </div>
+          ))}
+        </div>
         <div className="content-stack">
           {content.projects.map((project, index) => (
             <details className="admin-card" key={index}>
