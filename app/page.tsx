@@ -24,7 +24,7 @@ export default function Home() {
           <p className="hero-copy"><a className="inline-link" href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub</a> · <a className="inline-link" href="https://www.linkedin.com/in/adityaamit" target="_blank" rel="noreferrer">LinkedIn</a></p>
         </div>
         <div className="hero-side">
-          <figure className="profile-frame"><Image src={profileImage || '/images/profile/aditya-kinjawadekar.png'} alt="Aditya Kinjawadekar" width={900} height={1200} priority unoptimized={Boolean(profileImage)} sizes="(max-width: 760px) 230px, 286px" /></figure>
+          <figure className="profile-frame"><Image src={profileImage || '/images/profile/aditya-kinjawadekar.png?v=7dd2b91'} alt="Aditya Kinjawadekar" width={900} height={1200} priority unoptimized sizes="(max-width: 760px) 230px, 286px" /></figure>
           <aside className="workbench" aria-label="Current workbench">
             <div className="workbench__row"><span className="workbench__label">Now</span><span className="workbench__value"><span className="status-dot" />Building at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a></span></div>
           </aside>
