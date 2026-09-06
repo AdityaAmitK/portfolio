@@ -19,7 +19,7 @@ export function PostActions({ slug, published, previewUrl, compact = false }: { 
   }
 
   return <div className={`post-actions${compact ? ' post-actions--compact' : ''}`}>
-    <a className="admin-button admin-button--secondary" href={published ? publicUrl : previewUrl} target="_blank" rel="noreferrer">Preview ↗</a>
+    <a className="admin-button admin-button--secondary" href={published ? publicUrl : previewUrl} target="_blank" rel="noreferrer">Preview</a>
     <button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink(published ? 'Public link' : 'Preview link', published ? publicUrl : previewUrl)}>{copied || (published ? 'Copy public link' : 'Copy 24h preview')}</button>
     {published && <>
       <button className="admin-button admin-button--secondary" type="button" onClick={() => copyLink('WhatsApp link', tracked('whatsapp'))}>WhatsApp</button>

@@ -36,7 +36,7 @@ export async function GitHubContributions() {
       </div>
       <div className="contribution-meta">
         <strong>{total.toLocaleString('en-IN')} contributions</strong>
-        <a href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub</a>
       </div>
     </div>
   )

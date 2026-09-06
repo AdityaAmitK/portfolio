@@ -38,13 +38,13 @@ export default function Home() {
             <article className="experience" key={`${experience.company}-${experience.startDate}`}>
               <header className="experience__employer">
                 <p className="eyebrow">{monthLabel(experience.startDate)}–{monthLabel(experience.endDate)}</p>
-                <h3>{experience.companyHref ? <a href={experience.companyHref} target="_blank" rel="noreferrer">{experience.company} ↗</a> : experience.company}</h3>
+                <h3>{experience.companyHref ? <a href={experience.companyHref} target="_blank" rel="noreferrer">{experience.company}</a> : experience.company}</h3>
                 <p>{experience.role}</p>
               </header>
               <div className="experience__engagements">
                 {experience.engagements.map(engagement => (
                   <section className="engagement" key={`${engagement.name}-${engagement.startDate}`}>
-                    <div className="engagement__heading"><h4>{engagement.href ? <a href={engagement.href} target="_blank" rel="noreferrer">{engagement.name} ↗</a> : engagement.name}</h4><span>{monthLabel(engagement.startDate)}–{monthLabel(engagement.endDate)}</span></div>
+                    <div className="engagement__heading"><h4>{engagement.href ? <a href={engagement.href} target="_blank" rel="noreferrer">{engagement.name}</a> : engagement.name}</h4><span>{monthLabel(engagement.startDate)}–{monthLabel(engagement.endDate)}</span></div>
                     <p>{engagement.summary}</p>
                     {engagement.highlights.length > 0 && <ul>{engagement.highlights.map(highlight => <li key={highlight}>{highlight}</li>)}</ul>}
                     {engagement.tags.length > 0 && <div className="tags">{engagement.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}</div>}
@@ -70,7 +70,7 @@ export default function Home() {
 
       <section className="shell section">
         <div className="section-head"><h2>Tools I keep around</h2><Link className="section-link" href="/tools">The full workbench →</Link></div>
-        <div className="tool-list">{tools.slice(0, 3).map(tool => <div className="tool-row" key={tool.name}><h2>{tool.href ? <a className="tool-link" href={tool.href} target="_blank" rel="noreferrer">{tool.name} ↗</a> : tool.name}</h2><span className="tool-row__category">{tool.category}</span><p>{tool.note}</p></div>)}</div>
+        <div className="tool-list">{tools.slice(0, 3).map(tool => <div className="tool-row" key={tool.name}><h2>{tool.href ? <a className="tool-link" href={tool.href} target="_blank" rel="noreferrer">{tool.name}</a> : tool.name}</h2><span className="tool-row__category">{tool.category}</span><p>{tool.note}</p></div>)}</div>
       </section>
     </main>
   )
