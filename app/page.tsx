@@ -21,7 +21,7 @@ export default function Home() {
           <p className="eyebrow">Software engineer</p>
           <h1>I build useful software for <em>real problems.</em></h1>
           <p className="hero-copy">I’m Aditya Kinjawadekar, a software engineer at <a className="employer-link" href="https://fischerjordan.com" target="_blank" rel="noreferrer">Fischer Jordan</a>. I build products, developer tools, and backend systems.</p>
-          <p className="hero-copy"><a className="inline-link" href="https://github.com/AdityaAmitK" target="_blank" rel="noreferrer">GitHub</a> · <a className="inline-link" href="https://www.linkedin.com/in/adityaamit" target="_blank" rel="noreferrer">LinkedIn</a></p>
+          <div className="hero-actions"><Link className="primary-link" href="/projects">View selected work</Link><a className="inline-link" href="#contact">Contact me</a></div>
         </div>
         <div className="hero-side">
           <figure className="profile-frame"><Image src={profileImage || '/images/profile/aditya-kinjawadekar.png?v=7dd2b91'} alt="Aditya Kinjawadekar" width={900} height={1200} priority unoptimized sizes="(max-width: 760px) 230px, 286px" /></figure>
@@ -73,7 +73,7 @@ export default function Home() {
         <div className="tool-list">{tools.slice(0, 3).map(tool => <div className="tool-row" key={tool.name}><h2>{tool.href ? <a className="tool-link" href={tool.href} target="_blank" rel="noreferrer">{tool.name}</a> : tool.name}</h2><span className="tool-row__category">{tool.category}</span><p>{tool.note}</p></div>)}</div>
       </section>
 
-      <section className="shell section contact-section">
+      <section className="shell section contact-section" id="contact">
         <div><p className="eyebrow">Contact</p><h2>Want to build something useful?</h2><p>Send me a note or find me elsewhere online.</p></div>
         <div className="contact-links">{contactLinks.filter(link => link.label && link.href).map(link => <a href={link.href} target={link.href.startsWith('mailto:') ? undefined : '_blank'} rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'} key={`${link.label}-${link.href}`}><span>{link.label}</span><strong>{link.href.startsWith('mailto:') ? link.href.slice(7) : link.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</strong></a>)}</div>
       </section>
