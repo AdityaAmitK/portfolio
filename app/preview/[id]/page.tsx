@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Article } from '@/components/article'
 import { getPostById } from '@/lib/db'
-import { verifyPreviewToken } from '@/lib/preview'
+import { verifyPreviewToken, verifyStoredPreviewToken } from '@/lib/preview'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,8 +12,10 @@ async function previewPost({ params, searchParams }: Props) {
   const id = Number((await params).id)
   const tokenValue = (await searchParams).token
   const token = typeof tokenValue === 'string' ? tokenValue : ''
-  if (!Number.isInteger(id) || !verifyPreviewToken(token, id)) return undefined
-  return getPostById(id)
+  if (!Number.isSafeInteger(id) || id <= 0) return undefined
+  const post = getPostById(id)
+  if (!post || !(verifyStoredPreviewToken(post, token) || verifyPreviewToken(token, id))) return undefined
+  return post
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {

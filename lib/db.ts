@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { about, contactLinks, experiences, projects, skills, tools, type ManagedContent, type Project } from './content'
 
+export type Series = { id: number; slug: string; title: string; description: string }
 export type Tag = { id: number; name: string; slug: string }
 export type Post = {
   id: number
@@ -14,6 +15,11 @@ export type Post = {
   cover_image: string
   cover_alt: string
   tags: Tag[]
+  series?: Series | null
+  series_id?: number | null
+  preview_token_hash?: string
+  preview_expires_at?: string | null
+  source_revision?: string
   published: number
   published_at: string | null
   created_at: string
@@ -49,7 +55,7 @@ export type Comment = {
 }
 
 type PostRow = Omit<Post, 'tags'> & { category: string }
-type PostInput = Pick<Post, 'slug' | 'title' | 'description' | 'body' | 'cover_image' | 'cover_alt' | 'published'> & { id?: number; tagIds: number[] }
+type PostInput = Pick<Post, 'slug' | 'title' | 'description' | 'body' | 'cover_image' | 'cover_alt' | 'published'> & { id?: number; tagIds: number[]; series_id?: number | null }
 
 const databasePath = process.env.DATABASE_PATH
   ? path.resolve(/* turbopackIgnore: true */ process.env.DATABASE_PATH)
@@ -61,6 +67,12 @@ db.pragma('busy_timeout = 5000')
 db.pragma('journal_mode = WAL')
 db.pragma('foreign_keys = ON')
 db.exec(`
+  CREATE TABLE IF NOT EXISTS series (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT ''
+  );
   CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     slug TEXT NOT NULL UNIQUE,
@@ -132,6 +144,13 @@ db.exec(`
 const postColumns = new Set((db.prepare('PRAGMA table_info(posts)').all() as { name: string }[]).map(column => column.name))
 if (!postColumns.has('cover_image')) db.exec("ALTER TABLE posts ADD COLUMN cover_image TEXT NOT NULL DEFAULT ''")
 if (!postColumns.has('cover_alt')) db.exec("ALTER TABLE posts ADD COLUMN cover_alt TEXT NOT NULL DEFAULT ''")
+if (!postColumns.has('series_id')) db.exec('ALTER TABLE posts ADD COLUMN series_id INTEGER REFERENCES series(id)')
+if (!postColumns.has('preview_token_hash')) db.exec("ALTER TABLE posts ADD COLUMN preview_token_hash TEXT NOT NULL DEFAULT ''")
+if (!postColumns.has('preview_expires_at')) db.exec('ALTER TABLE posts ADD COLUMN preview_expires_at TEXT')
+if (!postColumns.has('source_revision')) db.exec("ALTER TABLE posts ADD COLUMN source_revision TEXT NOT NULL DEFAULT ''")
+db.prepare('INSERT OR IGNORE INTO series (slug, title, description) VALUES (?, ?, ?)').run(
+  'finance', 'Finance', 'Making sense of money, one question at a time. Notes on finance as I learn, with examples from everyday life in India.',
+)
 const commentColumns = new Set((db.prepare('PRAGMA table_info(comments)').all() as { name: string }[]).map(column => column.name))
 if (!commentColumns.has('is_private')) db.exec('ALTER TABLE comments ADD COLUMN is_private INTEGER NOT NULL DEFAULT 0')
 
@@ -177,8 +196,8 @@ if (contentVersion < 2) {
 if (contentVersion < 3) {
   const storedContent = db.prepare('SELECT value FROM settings WHERE key = ?').get('managed-content') as { value: string }
   const parsedContent = JSON.parse(storedContent.value) as ManagedContent
-  const dcprProject = projects.find(project => project.slug === 'dcpr-ai')!
-  if (!parsedContent.projects.some(project => project.slug === dcprProject.slug)) parsedContent.projects.push(dcprProject)
+  const dcprProject = projects.find(project => project.slug === 'dcpr-ai')
+  if (dcprProject && !parsedContent.projects.some(project => project.slug === dcprProject.slug)) parsedContent.projects.push(dcprProject)
   db.prepare('UPDATE settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(JSON.stringify(parsedContent), 'managed-content')
   db.prepare(`INSERT INTO settings (key, value) VALUES ('content-version', '3') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
 }
@@ -276,7 +295,10 @@ function hydratePost(row: PostRow | undefined) {
   if (!row) return undefined
   const { category: _category, ...post } = row
   void _category
-  return { ...post, tags: tagsForPost(row.id) } as Post
+  const series = row.series_id
+    ? db.prepare('SELECT id, slug, title, description FROM series WHERE id = ?').get(row.series_id) as Series | undefined
+    : undefined
+  return { ...post, tags: tagsForPost(row.id), series: series ?? null } as Post
 }
 
 function hydratePosts(rows: PostRow[]) {
@@ -297,6 +319,19 @@ export function getPublishedPosts(filters: { query?: string; tag?: string } = {}
   return hydratePosts(rows)
 }
 
+export function getSeries(slug: string): Series | undefined {
+  return db.prepare('SELECT id, slug, title, description FROM series WHERE slug = ?').get(slug) as Series | undefined
+}
+
+export function getAllSeries(): Series[] {
+  return db.prepare('SELECT id, slug, title, description FROM series ORDER BY title COLLATE NOCASE').all() as Series[]
+}
+
+export function getPublishedPostsInSeries(slug: string): Post[] {
+  return hydratePosts(db.prepare(`SELECT posts.* FROM posts JOIN series ON series.id = posts.series_id
+    WHERE posts.published = 1 AND series.slug = ? ORDER BY posts.published_at DESC, posts.created_at DESC`).all(slug) as PostRow[])
+}
+
 export function getAllPosts() {
   return hydratePosts(db.prepare('SELECT * FROM posts ORDER BY created_at DESC').all() as PostRow[])
 }
@@ -313,9 +348,9 @@ export const savePost = db.transaction((input: PostInput) => {
   const publishedAt = input.published ? new Date().toISOString() : null
   let id = input.id
   if (id) {
-    db.prepare(`UPDATE posts SET slug=@slug,title=@title,description=@description,body=@body,cover_image=@cover_image,cover_alt=@cover_alt,published=@published,published_at=COALESCE(published_at,@publishedAt),updated_at=CURRENT_TIMESTAMP WHERE id=@id`).run({ ...input, publishedAt })
+    db.prepare(`UPDATE posts SET slug=@slug,title=@title,description=@description,body=@body,cover_image=@cover_image,cover_alt=@cover_alt,published=@published,published_at=COALESCE(published_at,@publishedAt),series_id=CASE WHEN @setSeries THEN @seriesId ELSE series_id END,preview_token_hash=CASE WHEN @published THEN '' ELSE preview_token_hash END,preview_expires_at=CASE WHEN @published THEN NULL ELSE preview_expires_at END,source_revision='',updated_at=CURRENT_TIMESTAMP WHERE id=@id`).run({ ...input, publishedAt, setSeries: Number(input.series_id !== undefined), seriesId: input.series_id ?? null })
   } else {
-    id = Number(db.prepare(`INSERT INTO posts (slug,title,description,body,cover_image,cover_alt,category,published,published_at) VALUES (@slug,@title,@description,@body,@cover_image,@cover_alt,'',@published,@publishedAt)`).run({ ...input, publishedAt }).lastInsertRowid)
+    id = Number(db.prepare(`INSERT INTO posts (slug,title,description,body,cover_image,cover_alt,category,published,published_at,series_id) VALUES (@slug,@title,@description,@body,@cover_image,@cover_alt,'',@published,@publishedAt,@seriesId)`).run({ ...input, publishedAt, seriesId: input.series_id ?? null }).lastInsertRowid)
   }
   db.prepare('DELETE FROM post_tags WHERE post_id = ?').run(id)
   const attachTag = db.prepare('INSERT OR IGNORE INTO post_tags (post_id, tag_id) SELECT ?, id FROM tags WHERE id = ?')
