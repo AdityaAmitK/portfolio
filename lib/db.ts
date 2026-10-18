@@ -148,9 +148,20 @@ if (!postColumns.has('series_id')) db.exec('ALTER TABLE posts ADD COLUMN series_
 if (!postColumns.has('preview_token_hash')) db.exec("ALTER TABLE posts ADD COLUMN preview_token_hash TEXT NOT NULL DEFAULT ''")
 if (!postColumns.has('preview_expires_at')) db.exec('ALTER TABLE posts ADD COLUMN preview_expires_at TEXT')
 if (!postColumns.has('source_revision')) db.exec("ALTER TABLE posts ADD COLUMN source_revision TEXT NOT NULL DEFAULT ''")
+const financeTitle = 'Figuring Out Money'
+const financeDescription = 'A weekly series where I work through questions about money, share what I understand, and revisit what I get wrong. A place to learn, question, and grow along the way.'
 db.prepare('INSERT OR IGNORE INTO series (slug, title, description) VALUES (?, ?, ?)').run(
-  'finance', 'Finance', 'Making sense of money, one question at a time. Notes on finance as I learn, with examples from everyday life in India.',
+  'finance', financeTitle, financeDescription,
 )
+db.transaction(() => {
+  const version = Number((db.prepare('SELECT value FROM settings WHERE key = ?').get('finance-series-metadata-version') as { value: string } | undefined)?.value || 0)
+  if (version >= 1) return
+  db.prepare('UPDATE series SET title = ?, description = ? WHERE slug = ? AND title = ? AND description = ?').run(
+    financeTitle, financeDescription, 'finance', 'Finance',
+    'Making sense of money, one question at a time. Notes on finance as I learn, with examples from everyday life in India.',
+  )
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('finance-series-metadata-version', '1') ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`).run()
+})()
 const commentColumns = new Set((db.prepare('PRAGMA table_info(comments)').all() as { name: string }[]).map(column => column.name))
 if (!commentColumns.has('is_private')) db.exec('ALTER TABLE comments ADD COLUMN is_private INTEGER NOT NULL DEFAULT 0')
 
@@ -321,6 +332,10 @@ export function getPublishedPosts(filters: { query?: string; tag?: string } = {}
 
 export function getSeries(slug: string): Series | undefined {
   return db.prepare('SELECT id, slug, title, description FROM series WHERE slug = ?').get(slug) as Series | undefined
+}
+
+export function setFinanceSeriesMetadata(title: string, description: string): boolean {
+  return db.prepare("UPDATE series SET title = ?, description = ? WHERE slug = 'finance'").run(title, description).changes > 0
 }
 
 export function getAllSeries(): Series[] {

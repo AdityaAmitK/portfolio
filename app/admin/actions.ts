@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createSession, destroySession, isAuthenticated, passwordsMatch } from '@/lib/auth'
-import { deleteComment as deleteCommentRecord, deletePost, deleteTag as deleteTagRecord, ensureTags, moderateComment as moderateCommentRecord, replyToComment as replyToCommentRecord, saveManagedContent, savePost, saveTag as saveTagRecord } from '@/lib/db'
+import { deleteComment as deleteCommentRecord, deletePost, deleteTag as deleteTagRecord, ensureTags, moderateComment as moderateCommentRecord, replyToComment as replyToCommentRecord, saveManagedContent, savePost, saveTag as saveTagRecord, setFinanceSeriesMetadata } from '@/lib/db'
 import type { ManagedContent } from '@/lib/content'
 
 export async function login(formData: FormData) {
@@ -69,6 +69,22 @@ export async function removePost(formData: FormData) {
   revalidatePath('/')
   revalidatePath('/writing')
   redirect('/admin')
+}
+
+export async function updateFinanceSeries(formData: FormData) {
+  if (!(await isAuthenticated())) redirect('/admin/login')
+  const titleValue = formData.get('title')
+  const descriptionValue = formData.get('description')
+  const title = typeof titleValue === 'string' ? titleValue.trim() : ''
+  const description = typeof descriptionValue === 'string' ? descriptionValue.trim() : ''
+  if (!title || !description) redirect('/admin/content?seriesError=required')
+  if (title.length > 120 || description.length > 1000) redirect('/admin/content?seriesError=length')
+  if (!setFinanceSeriesMetadata(title, description)) redirect('/admin/content?seriesError=missing')
+  revalidatePath('/')
+  revalidatePath('/writing')
+  revalidatePath('/writing/series/finance')
+  revalidatePath('/admin/content')
+  redirect('/admin/content?seriesSaved=1')
 }
 
 export async function updateContent(formData: FormData) {

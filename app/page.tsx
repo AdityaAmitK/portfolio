@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ProjectTeaser } from '@/components/project-teaser'
 import { GitHubContributions } from '@/components/github-contributions'
-import { getManagedContent, getPublishedPosts } from '@/lib/db'
+import { getManagedContent, getPublishedPosts, getPublishedPostsInSeries, getSeries } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +13,8 @@ function monthLabel(value?: string) {
 
 export default function Home() {
   const posts = getPublishedPosts().slice(0, 3)
+  const series = getSeries('finance')
+  const seriesPosts = series ? getPublishedPostsInSeries(series.slug) : []
   const { profileImage, contactLinks, experiences, projects, tools } = getManagedContent()
   return (
     <main id="main">
@@ -67,6 +69,11 @@ export default function Home() {
         <div className="section-head"><h2>Recent writing</h2><Link className="section-link" href="/writing">All writing →</Link></div>
         {posts.length ? <div className="writing-list">{posts.map(post => <Link href={`/writing/${post.slug}`} className="post-row" key={post.id}><div><h3>{post.title}</h3><p>{post.description}</p></div><time>{new Date(post.published_at || post.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' })}</time></Link>)}</div> : <div className="empty-note">No posts yet.</div>}
       </section>
+
+      {series && <section className="shell section">
+        <div className="section-head"><h2>Series</h2></div>
+        <div className="writing-list"><Link href={`/writing/series/${series.slug}`} className="post-row"><div><h3>{series.title}</h3><p>{series.description}</p></div>{seriesPosts[0] && <time>{new Date(seriesPosts[0].published_at || seriesPosts[0].created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' })}</time>}</Link></div>
+      </section>}
 
       <section className="shell section">
         <div className="section-head"><h2>Tools I keep around</h2><Link className="section-link" href="/tools">The full workbench →</Link></div>
