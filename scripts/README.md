@@ -42,3 +42,33 @@ node --check scripts/import-article.mjs
 ```
 
 Separate authorized verification should cover migrations on an existing disposable database, draft creation/reimport/token expiry and malformed tokens, HMAC compatibility, published/non-Finance slug refusal, transactional rollback on invalid covers/tag failures, revision no-op, first-publication/update dates, credential clearing, and public exclusion of drafts. Those checks are not performed by the code-check commands above.
+
+
+## Telegram comment alerts (VPS)
+
+`comment-alerts.py` runs as `t3` on `aditya-vps` every minute through the
+`portfolio-comment-alerts` crontab entry. Installed worker and private delivery
+state live in `~/.config/telegram-notifications/comment-alerts/`. Credentials are
+read from the existing `~/.config/telegram-notifications/.env` at runtime.
+The worker reads `/opt/portfolio/data/portfolio.db` read-only using the existing
+`sudo -n -u portfolio` permission. No site restart or schema change is needed.
+
+Install/update the script there with mode 600 and invoke it using `/usr/bin/python3`.
+On first installation only, run it with `--initialize` before enabling cron;
+this saves the current maximum comment ID without sending old comments.
+Never reset existing state when updating the worker.
+
+Reader comments on all posts, including private and hidden comments, generate
+plain-text notifications with author, body, article link, and moderation link.
+Author replies are excluded. Deleted comments cannot be recovered by this poller.
+A lock prevents overlapping runs. Accepted messages advance an atomically saved
+cursor. An ambiguous timeout/crash leaves `pending` set and pauses delivery to
+avoid duplicate messages; inspect Telegram before manually reconciling that ID.
+Three explicit Telegram rejections also pause delivery until configuration is fixed
+and the private `failures` count is reset. Logs contain safe IDs/outcomes only.
+
+Check `crontab -l`, the cron service, and private `state.json` to inspect setup.
+Separate end-to-end verification: submit a reader comment, wait up to two minutes,
+confirm one Telegram alert, and confirm another cron tick does not repeat it.
+Also check a private comment and confirm author replies do not trigger alerts.
+No delivery test message is sent during installation.
