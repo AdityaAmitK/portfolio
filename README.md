@@ -24,6 +24,10 @@ docker compose up -d --build
 
 The container listens on `127.0.0.1:3000` for Caddy or Nginx. SQLite data lives in the persistent `portfolio_data` volume.
 
+## Article charts
+
+Article bodies can include interactive or static charts with a fenced `article-chart` JSON block. See [docs/article-charts.md](docs/article-charts.md) for the contract and examples.
+
 ## Checks
 
 ```bash

@@ -12,6 +12,7 @@ import typescript from 'highlight.js/lib/languages/typescript'
 import { isValidElement, useMemo, useState, type ReactNode } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { ArticleChart } from './article-chart'
 
 hljs.registerLanguage('bash', bash)
 hljs.registerLanguage('css', css)
@@ -84,6 +85,7 @@ const components: Components = {
   code: ({ children, className }) => {
     const code = textFromChildren(children).replace(/\n$/, '')
     const language = languageFromClassName(className)
+    if (language === 'article-chart') return <ArticleChart source={code} fallback={<CodeBlock code={code} language={language} />} />
     if (language || code.includes('\n')) return <CodeBlock code={code} language={language} />
     return <code>{children}</code>
   },
